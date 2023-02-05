@@ -19,6 +19,14 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+#nix
 .direnv
 .pre-commit-config.yaml
 result
+
+#fonts
+fonts
+
+#obsidian files
+content/second-brain
