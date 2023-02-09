@@ -44,7 +44,7 @@
         ./nix/hooks.nix
       ];
 
-      dream2nix.config.projectRoot = ./.;
+      #dream2nix.config.projectRoot = ./.;
 
       perSystem = {
         config,
@@ -71,7 +71,7 @@
 
         devShells.default = pkgs.mkShell {
           packages = builtins.attrValues {
-            inherit (pkgs) yarn;
+            inherit (pkgs) nodejs;
             inherit (config.packages) obsidian-export;
           };
           shellHook = config.pre-commit.installationScript;
