@@ -1,56 +1,25 @@
 import rss from '@astrojs/rss';
-import { blog } from '../lib/markdoc/frontmatter.schema';
-import { readAll } from '../lib/markdoc/read';
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '../config';
+import { CollectionEntry, getCollection } from 'astro:content';
 
-export const get = async () => {
-	const posts = await readAll({
-		directory: 'blog',
-		frontmatterSchema: blog,
-	});
+import { SITE_TITLE, SITE_DESCRIPTION } from '@config';
 
-	const sortedPosts = posts
-		.filter((p) => p.frontmatter.draft !== true)
-		.sort(
-			(a, b) =>
-				new Date(b.frontmatter.date).valueOf() - new Date(a.frontmatter.date).valueOf()
-		);
+function sortPosts(a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) {
+    return Number(b.data.publishDate) - Number(a.data.publishDate);
+}
 
-	let baseUrl = SITE_URL;
-	// removing trailing slash if found
-	// https://example.com/ => https://example.com
-	baseUrl = baseUrl.replace(/\/+$/g, '');
+export const get = async (context: any) => {
+    const unsortedPosts = await getCollection('posts');
+    const posts = unsortedPosts.sort((a, b) => sortPosts(a, b));
 
-	const rssItems = sortedPosts.map(({ frontmatter, slug }) => {
-		if (frontmatter.external) {
-			const title = frontmatter.title;
-			const pubDate = frontmatter.date;
-			const link = frontmatter.url;
-
-			return {
-				title,
-				pubDate,
-				link,
-			};
-		}
-
-		const title = frontmatter.title;
-		const pubDate = frontmatter.date;
-		const description = frontmatter.description;
-		const link = `${baseUrl}/blog/${slug}`;
-
-		return {
-			title,
-			pubDate,
-			description,
-			link,
-		};
-	});
-
-	return rss({
-		title: SITE_TITLE,
-		description: SITE_DESCRIPTION,
-		site: baseUrl,
-		items: rssItems,
-	});
+    return rss({
+        title: `${SITE_TITLE}’s Blog`,
+        description: SITE_DESCRIPTION,
+        site: context.site!.href,
+        items: posts.map((item) => ({
+            title: item.data.title,
+            description: item.data.description,
+            link: `/blog/${item.slug}/`,
+            pubDate: item.data.pubDatetime,
+        })),
+    });
 };

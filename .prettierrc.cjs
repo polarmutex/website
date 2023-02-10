@@ -4,27 +4,6 @@ module.exports = {
     semi: true,
     singleQuote: true,
     tabWidth: 4,
-    trailingComma: 'es5',
-    useTabs: true,
-    plugins: ['./node_modules/prettier-plugin-astro'],
-    overrides: [
-        {
-            files: '*.astro',
-            options: {
-                parser: 'astro',
-            },
-        },
-        {
-            files: ['.*', '*.md', '*.toml'],
-            options: {
-                useTabs: false,
-            },
-        },
-        {
-            files: ['*.yaml', '*.yml', '*.json'],
-            options: {
-                tabWidth: 4,
-            },
-        },
-    ],
+    trailingComma: 'all',
+    useTabs: false,
 };
