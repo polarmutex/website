@@ -79,5 +79,10 @@ module.exports = {
             },
         }),
     },
-    plugins: [require('@tailwindcss/typography')],
+    daisyui: {
+        theme: ['cmyk', 'night'],
+        darkTheme: 'night',
+    },
+    darkMode: ['class', '[data-theme="night"]'],
+    plugins: [require('daisyui'), require('@tailwindcss/typography')],
 };
