@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { resolve } from 'path';
 
 import sitemap from '@astrojs/sitemap';
 import svelte from '@astrojs/svelte';
@@ -35,4 +36,10 @@ export default defineConfig({
             },
         }),
     ],
+    vite: {
+        resolve: { alias: [{ find: '@', replacement: resolve('src') }] },
+        ssr: {
+            external: ['svgo'],
+        },
+    },
 });

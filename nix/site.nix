@@ -15,18 +15,22 @@ in {
         version = inputs.self.sourceInfo.shortRev or "dirty";
         src = filter {
           root = ./..;
-          include = [
-            (inDirectory "src")
-            (inDirectory "public")
-            (matchExt "js")
-            (matchExt "cjs")
-            (matchExt "mjs")
-            ../package.json
-            ../package-lock.json
-          ];
+          #include = [
+          #  (inDirectory "src")
+          #  (inDirectory "public")
+          #  (matchExt "js")
+          #  (matchExt "cjs")
+          #  (matchExt "mjs")
+          #  ../package.json
+          #  ../package-lock.json
+          #];
         };
+        buildInputs = with pkgs; [
+          nodejs-18_x
+        ];
+        npmBuild = "npm run build";
         npmFlags = ["--ignore-scripts"];
-        npmDepsHash = "sha256-2/ChB4Ftf98Ci0eL5YQ0s/T8YXHKwNsIQVBRsf6mIiU=";
+        npmDepsHash = "sha256-tu93AMbRYpe/XuzbXiqvjvt6eIlVSWTS3sGxUgjVHMI=";
         installPhase = ''
           mv dist $out
         '';

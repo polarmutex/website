@@ -4,7 +4,7 @@ import { CollectionEntry, getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@config';
 
 function sortPosts(a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) {
-    return Number(b.data.publishDate) - Number(a.data.publishDate);
+    return Number(b.data.published) - Number(a.data.published);
 }
 
 export const get = async (context: any) => {
