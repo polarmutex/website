@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import { CollectionEntry, getCollection } from 'astro:content';
 
-import { SITE_TITLE, SITE_DESCRIPTION } from '@config';
+import { SITE_DESCRIPTION, SITE_TITLE } from '@config';
 
 function sortPosts(a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) {
     return Number(b.data.publishDate) - Number(a.data.publishDate);
@@ -18,8 +18,8 @@ export const get = async (context: any) => {
         items: posts.map((item) => ({
             title: item.data.title,
             description: item.data.description,
-            link: `/blog/${item.slug}/`,
-            pubDate: item.data.pubDatetime,
+            link: `/posts/${item.slug}/`,
+            pubDate: item.data.published,
         })),
     });
 };

@@ -21,13 +21,13 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const { post } = Astro.props;
 
-const { title, author, description, ogImage, pubDatetime, tags } = post.data;
+const { title, description, published, tags } = post.data;
 const { Content } = await post.render();
 ---
 
 <Layout>
     <article
-        class="items-start justify-center w-full mx-auto mt-16 mb-32 prose swyxcontent dark:prose-invert max-w-none"
+        class="items-start justify-center w-full mx-auto mt-16 mb-32 prose swyxcontent dark:prose-invert max-w-none dark:text-white"
     >
         <h1
             class="md:text-center mb-8 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl"
@@ -39,7 +39,7 @@ const { Content } = await post.render();
         >
             <p class="flex items-center text-sm text-gray-700 dark:text-gray-300">swyx</p>
             <p class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                {new Date(pubDatetime).toISOString().slice(0, 10)}
+                {new Date(published).toISOString().slice(0, 10)}
             </p>
         </div>
         <!--line break <div

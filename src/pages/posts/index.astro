@@ -13,12 +13,10 @@ let selectedCategories: any = null;
     <!--<svelte:window on:keyup={focusSearch} />-->
     <section class="mx-auto mb-16 flex max-w-2xl flex-col items-start justify-center px-4 sm:px-8">
         <h1 class="mb-4 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl">
-            {SITE_TITLE} Blog
+            Idea Showcase
         </h1>
         <p class="mb-4 text-gray-600 dark:text-gray-400">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum sunt reprehenderit
-            alias rerum dolor impedit. In total, I've written {posts.length} articles on my blog. Use
-            the search below to filter by title.
+            In total, I've written {posts.length} articles on my blog. Use the search below to filter.
         </p>
         <div class="relative mb-4 w-full">
         <input
@@ -41,7 +39,7 @@ let selectedCategories: any = null;
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg
         >
         </div>
-    {
+    <!--{
             POST_CATEGORIES.length > 0 && (
                 <>
                     <div class="mt-2 mb-8 flex items-center">
@@ -67,7 +65,7 @@ let selectedCategories: any = null;
                     </div>
                 </>
             )
-        }
+        }-->
 
     <!-- you can hardcode yourmost popular posts or pinned post here if you wish -->
     {
@@ -110,6 +108,7 @@ let selectedCategories: any = null;
             inputBox.value = initialState;
         }
     }
+    updateResults()
 
 
     import uFuzzy from '@leeoniya/ufuzzy'
@@ -149,9 +148,9 @@ let selectedCategories: any = null;
                     [
                         v.data.title,
                         v.subtitle,
-                        //v.tags.map((tag) => 'hashtag-' + tag), // add #tag so as to enable tag search
+                        v.data.tags.map((tag) => 'hashtag-' + tag), // add #tag so as to enable tag search
                         v.content,
-                        v.description
+                        v.data.description
                     ].join(' ')
                 );
                 const idxs = u.filter(haystack, search);
@@ -201,10 +200,10 @@ let selectedCategories: any = null;
                             </h4>
                         </div>
                         <p class="text-gray-600 mb-2 break-all sm:break-words dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-100">
-                            ${result.description}
+                            ${result.data.description}
                         </p>
                         <div class="flex justify-between items-center gap-1 text-left text-gray-500 sm:justify-start sm:flex-row sm:gap-4 md:mb-0 md:text-sm">
-                            <p>date</p>
+                            <p>${new Date(result.data.published).toISOString().slice(0,10)}</p>
                             <span class="px-4 max-h-6 flex items-center capitalize bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400">
                                 ${result.data?.category || 'post'}
                             </span>

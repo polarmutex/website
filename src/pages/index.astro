@@ -48,7 +48,7 @@ const posts = await getCollection('posts');
                 Featured Posts
             </h3>
             <div class="flex flex-col gap-6 md:flex-row">
-                <FeatureCard
+                <!--<FeatureCard
                     title="Welcome to swyxkit 2022!"
                     href="/welcome"
                     stringData="Jan 2022"
@@ -58,7 +58,7 @@ const posts = await getCollection('posts');
                     href="/moving-to-a-github-cms"
                     stringData="Jan 2022"
                 />
-                <FeatureCard title="HTML Ipsum demo" href="/moo" stringData="Jan 2022" />
+                <FeatureCard title="HTML Ipsum demo" href="/moo" stringData="Jan 2022" />-->
             </div>
         </section>
 
@@ -74,24 +74,24 @@ const posts = await getCollection('posts');
                             Latest Posts
                         </h3>
                         <ul class="space-y-2 text-white">
-                            {posts.map(({ data }) => (
+                            {posts.map(({ data, slug }) => (
                                 <li>
                                     <a
                                         class="font-bold"
                                         data-sveltekit-preload-data
-                                        href={data.slug}
+                                        href=`posts/${slug}`
                                     >
                                         {data.title}
                                     </a>
                                     <span class="hidden text-xs text-black dark:text-gray-400 sm:inline">
-                                        {new Date(data.pubDatetime).toISOString().slice(0, 10)}
+                                        {new Date(data.published).toISOString().slice(0, 10)}
                                     </span>
                                 </li>
                             ))}
                         </ul>
                         <a
                             class="mt-2 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"
-                            href="/blog"
+                            href="/posts"
                         >
                             Search and see all posts
                             <svg

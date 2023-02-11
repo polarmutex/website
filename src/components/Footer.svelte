@@ -39,7 +39,7 @@
             </a>-->
         </div>
     </div>
-    <p class="prose px-4 dark:prose-invert sm:px-8">
+    <p class="prose px-4 dark:prose-invert sm:px-8 dark:text-white">
         This blog is based on the
         <a href="https://swyxkit.netlify.app/">swyxkit</a>
         template.
