@@ -30,7 +30,7 @@ in {
         ];
         npmBuild = "npm run build";
         npmFlags = ["--ignore-scripts"];
-        npmDepsHash = "sha256-tu93AMbRYpe/XuzbXiqvjvt6eIlVSWTS3sGxUgjVHMI=";
+        npmDepsHash = "sha256-hI0EVC1VmtsoP1h69YYryNKU40xFLFxJHTxaKVHAdvk=";
         installPhase = ''
           mv dist $out
         '';
