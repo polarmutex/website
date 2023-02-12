@@ -71,7 +71,7 @@
 
         devShells.default = pkgs.mkShell {
           packages = builtins.attrValues {
-            inherit (pkgs) nodejs;
+            inherit (pkgs) cachix nodejs;
             inherit (config.packages) obsidian-export;
           };
           shellHook = config.pre-commit.installationScript;
