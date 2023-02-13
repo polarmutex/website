@@ -1,19 +1,26 @@
 {
-  description = "nobbz.dev - Website";
+  description = "Build a cargo project";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    #nixpkgs-leptos.url = "github:benwis/nixpkgs";
+    rust-overlay.url = "github:oxalica/rust-overlay";
 
     crane = {
       url = "github:ipetkov/crane";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    d2n.url = "github:nix-community/dream2nix";
-    d2n.inputs.all-cabal-json.follows = "nixpkgs";
     flake-parts.url = "github:hercules-ci/flake-parts";
     nix-filter.url = "github:numtide/nix-filter";
     obsidian-export = {
       url = "github:zoni/obsidian-export/v22.11.0";
+      flake = false;
+    };
+
+    flake-utils.url = "github:numtide/flake-utils";
+
+    advisory-db = {
+      url = "github:rustsec/advisory-db";
       flake = false;
     };
     obsidian-second-brain = {
@@ -25,57 +32,163 @@
 
   outputs = {
     self,
-    crane,
-    d2n,
     nixpkgs,
-    flake-parts,
-    pre-commit,
+    crane,
+    flake-utils,
+    advisory-db,
     ...
-  } @ inputs: let
-    systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin"];
-  in
-    flake-parts.lib.mkFlake {inherit inputs;} {
-      inherit systems;
+  } @ inputs:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          #(_final: prev: {
+          #  benwis = import inputs.nixpkgs-leptos {
+          #    inherit system;
+          #  };
+          #})
+          inputs.rust-overlay.overlays.default
+        ];
+      };
 
-      imports = [
-        d2n.flakeModuleBeta
-        pre-commit.flakeModule
-        ./nix/site.nix
-        ./nix/hooks.nix
-      ];
+      inherit (pkgs) lib;
 
-      #dream2nix.config.projectRoot = ./.;
+      craneLib = crane.lib.${system};
+      src = craneLib.cleanCargoSource ./.;
 
-      perSystem = {
-        config,
-        pkgs,
-        self',
-        inputs',
-        system,
-        ...
-      }: {
-        packages = {
-          obsidian-export = let
-            craneLib = crane.lib.${system};
-          in
-            craneLib.buildPackage {
-              #src = craneLib.cleanCargoSource inputs.obsidian-export;
-              src = inputs.obsidian-export;
-              buildInputs = [
-                # Add additional build inputs here
-              ];
-              doChek = false;
-              doInstallCheck = false;
-            };
+      # Common arguments can be set here to avoid repeating them later
+      commonArgs = {
+        inherit src;
+
+        buildInputs =
+          [
+            # Add additional build inputs here
+          ]
+          ++ lib.optionals pkgs.stdenv.isDarwin [
+            # Additional darwin specific inputs can be set here
+            pkgs.libiconv
+          ];
+      };
+
+      # Build *just* the cargo dependencies, so we can reuse
+      # all of that work (e.g. via cachix) when running in CI
+      cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
+      # Build the actual crate itself, reusing the dependency
+      # artifacts from above.
+      my-crate = craneLib.buildPackage (commonArgs
+        // {
+          inherit cargoArtifacts;
+        });
+
+      cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
+        pname = "cargo-leptos";
+        version = "0.1.7";
+        buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
+
+        src = pkgs.fetchFromGitHub {
+          owner = "leptos-rs";
+          repo = pname;
+          rev = version;
+          hash = "sha256-Z7JRTsB3krXAKHbdezaTjR6mUQ07+e4pYtpaMLuoR8I=";
         };
 
-        devShells.default = pkgs.mkShell {
-          packages = builtins.attrValues {
-            inherit (pkgs) cachix nodejs;
-            inherit (config.packages) obsidian-export;
-          };
-          shellHook = config.pre-commit.installationScript;
+        cargoSha256 = "sha256-MqEErweIHHF8w7WANfh8OpzvS774aIfcfkEOwEofSqw=";
+
+        nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
+
+        buildInputs = with pkgs;
+          [openssl pkg-config]
+          ++ lib.optionals stdenv.isDarwin [
+            Security
+          ];
+
+        doCheck = false; # integration tests depend on changing cargo config
+
+        meta = with lib; {
+          description = "A build tool for the Leptos web framework";
+          homepage = "https://github.com/leptos-rs/cargo-leptos";
+          changelog = "https://github.com/leptos-rs/cargo-leptos/blob/v${version}/CHANGELOG.md";
+          license = with licenses; [mit];
+          maintainers = with maintainers; [benwis];
         };
       };
-    };
+    in {
+      checks =
+        {
+          # Build the crate as part of `nix flake check` for convenience
+          inherit my-crate;
+
+          # Run clippy (and deny all warnings) on the crate source,
+          # again, resuing the dependency artifacts from above.
+          #
+          # Note that this is done as a separate derivation so that
+          # we can block the CI if there are issues here, but not
+          # prevent downstream consumers from building our crate by itself.
+          my-crate-clippy = craneLib.cargoClippy (commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+            });
+
+          my-crate-doc = craneLib.cargoDoc (commonArgs
+            // {
+              inherit cargoArtifacts;
+            });
+
+          # Check formatting
+          my-crate-fmt = craneLib.cargoFmt {
+            inherit src;
+          };
+
+          # Audit dependencies
+          my-crate-audit = craneLib.cargoAudit {
+            inherit src advisory-db;
+          };
+
+          # Run tests with cargo-nextest
+          # Consider setting `doCheck = false` on `my-crate` if you do not want
+          # the tests to run twice
+          my-crate-nextest = craneLib.cargoNextest (commonArgs
+            // {
+              inherit cargoArtifacts;
+              partitions = 1;
+              partitionType = "count";
+            });
+        }
+        // lib.optionalAttrs (system == "x86_64-linux") {
+          # NB: cargo-tarpaulin only supports x86_64 systems
+          # Check code coverage (note: this will not upload coverage anywhere)
+          my-crate-coverage = craneLib.cargoTarpaulin (commonArgs
+            // {
+              inherit cargoArtifacts;
+            });
+        };
+
+      packages.default = my-crate;
+
+      apps.default = flake-utils.lib.mkApp {
+        drv = my-crate;
+      };
+
+      devShells.default = pkgs.mkShell {
+        inputsFrom = builtins.attrValues self.checks;
+
+        # Extra inputs can be added here
+        nativeBuildInputs = with pkgs; [
+          #cargo
+          (rust-bin.selectLatestNightlyWith
+            (toolchain:
+              toolchain.default.override {
+                extensions = ["rust-src"];
+                targets = ["wasm32-unknown-unknown"];
+              }))
+          cargo-leptos
+          sass
+          rustc
+        ];
+        packages = [
+        ];
+      };
+    });
 }

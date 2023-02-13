@@ -30,3 +30,5 @@ fonts
 
 #obsidian files
 src/content/obsidian
+target
+.sass-cache/be4a68575e98e3304e79de74f221f80b076c1c07
