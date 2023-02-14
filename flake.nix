@@ -185,7 +185,10 @@
               }))
           cargo-leptos
           sass
-          rustc
+          nodejs
+          openssl
+          pkg-config
+          binaryen
         ];
         packages = [
         ];
