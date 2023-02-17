@@ -1,5 +1,5 @@
 [package]
-name = "darkmode"
+name = "brianryall-xyz"
 version = "0.1.0"
 edition = "2021"
 
@@ -35,7 +35,7 @@ ssr = [
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "leptos_start"
+output-name = "website"
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written
@@ -46,9 +46,9 @@ style-file = "./src/styles/style.css"
 # [Optional] Files in the asset-dir will be copied to the site-root directory
 assets-dir = "assets"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
-site-addr = "127.0.0.1:3000"
+site-addr = "127.0.0.1:4000"
 # The port to use for automatic reload monitoring
-reload-port = 3001
+reload-port = 4001
 # [Optional] Command to use when running end2end tests. It will run in the end2end dir.
 end2end-cmd = "npx playwright test"
 #  The browserlist query used for optimizing the CSS.

@@ -6,10 +6,10 @@ cfg_if! {
         use leptos_actix::*;
         use actix_files::{Files};
         use actix_web::{HttpServer, middleware::Compress};
-        use darkmode::app::register_server_functions;
+        //use brianryall_xyz::app::register_server_functions;
 
         fn app(cx: leptos::Scope) -> impl IntoView {
-            use darkmode::app::*;
+            use brianryall_xyz::app::*;
 
             view! { cx, <App /> }
         }
@@ -22,7 +22,7 @@ cfg_if! {
             simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
             log::info!("serving at http://{addr}");
 
-            register_server_functions();
+            //register_server_functions();
 
             HttpServer::new(move || {
                 let leptos_options = &conf.leptos_options;
