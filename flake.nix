@@ -189,6 +189,7 @@
           openssl
           pkg-config
           binaryen
+          nodePackages.tailwindcss
         ];
         packages = [
         ];

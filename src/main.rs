@@ -1,57 +1,52 @@
-
 use cfg_if::cfg_if;
-use leptos::*;
 
-// boilerplate to run in different modes
 cfg_if! {
-    // server-only stuff
     if #[cfg(feature = "ssr")] {
+        use leptos::*;
+        use leptos_actix::*;
         use actix_files::{Files};
-        use actix_web::*;
-        use hackernews::{App,AppProps};
-        use leptos_actix::{LeptosRoutes, generate_route_list};
+        use actix_web::{HttpServer, middleware::Compress};
+        use darkmode::app::register_server_functions;
 
-        #[get("/style.css")]
-        async fn css() -> impl Responder {
-            actix_files::NamedFile::open_async("./style.css").await
-        }
-        #[get("/favicon.ico")]
-        async fn favicon() -> impl Responder {
-            actix_files::NamedFile::open_async("./target/site//favicon.ico").await
+        fn app(cx: leptos::Scope) -> impl IntoView {
+            use darkmode::app::*;
+
+            view! { cx, <App /> }
         }
 
         #[actix_web::main]
         async fn main() -> std::io::Result<()> {
-            // Setting this to None means we'll be using cargo-leptos and its env vars.
-            let conf = get_configuration(None).await.unwrap();
+            let conf = get_configuration(Some("Cargo.toml")).await.unwrap();
+            let addr = conf.leptos_options.site_addr;
 
-            let addr = conf.leptos_options.site_addr.clone();
-            // Generate the list of routes in your Leptos App
-            let routes = generate_route_list(|cx| view! { cx, <App/> });
+            simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
+            log::info!("serving at http://{addr}");
+
+            register_server_functions();
 
             HttpServer::new(move || {
                 let leptos_options = &conf.leptos_options;
                 let site_root = &leptos_options.site_root;
+                let routes = generate_route_list(app);
 
-                App::new()
-                    .service(css)
-                    .service(favicon)
-                    .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
-                    .leptos_routes(leptos_options.to_owned(), routes.to_owned(), |cx| view! { cx, <App/> })
-                    .service(Files::new("/", &site_root))
-                //.wrap(middleware::Compress::default())
+                actix_web::App::new()
+                    .route("/api/{tail:.*}", handle_server_fns())
+                    .leptos_routes(leptos_options.clone(), routes, app)
+                    // used by cargo-leptos. Should handle static files another way if not using cargo-leptos.
+                    // fallback (for static files)
+                    .service(Files::new("", format!("./{site_root}")))
+                    .wrap(Compress::default())
             })
             .bind(&addr)?
             .run()
             .await
         }
-    } else {
-        fn main() {
-            use hackernews::{App, AppProps};
-
-            _ = console_log::init_with_level(log::Level::Debug);
-            console_error_panic_hook::set_once();
-            mount_to_body(|cx| view! { cx, <App/> })
+    }
+    else {
+        pub fn main() {
+            // no client-side main function
+            // unless we want this to work with e.g., Trunk for pure client-side testing
+            // see lib.rs for hydration function instead
         }
     }
 }
