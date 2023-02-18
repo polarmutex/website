@@ -1,5 +1,6 @@
 use crate::components::nav::*;
 use crate::routes::homepage::*;
+use crate::routes::ideas::*;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -25,6 +26,7 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
                 <Routes>
                     <Route path="" view=|cx| view! { cx, <Homepage /> } />
+                    <Route path="ideas/" view=|cx| view! { cx, <Ideas /> } />
                 </Routes>
             </main>
         </Router>

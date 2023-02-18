@@ -7,7 +7,6 @@ pub fn Homepage(cx: Scope) -> impl IntoView {
     view! { cx,
         // sets the document title
         //<Title text="Welcome to Leptos"/>
-        <h1>"Welcome to Leptos!"</h1>
         <div class="flex flex-col items-start justify-center max-w-2xl px-4 pb-16 mx-auto border-gray-200 dark:border-gray-700 sm:px-8">
             <div class="flex flex-col-reverse items-start sm:flex-row">
                 <div class="flex flex-col pr-8">
