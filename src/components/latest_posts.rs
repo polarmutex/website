@@ -11,7 +11,7 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
             <h3 id="latest" class="mb-6 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
                 "Latest Posts"
             </h3>
-             /*<Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
+             <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
                 <ul class="space-y-2 text-white">
                 { move || {
                     posts.read().map(move |posts| match posts {
@@ -33,7 +33,7 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
                     }).unwrap_or_default()
                 }}
                 </ul>
-            </Suspense>*/
+            </Suspense>
             <a class="mt-2 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200" href="/blog">
                 "Search and see all posts"
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="ml-1 h-6 w-6">
