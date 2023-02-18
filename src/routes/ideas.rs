@@ -1,7 +1,12 @@
+use crate::components::index_card::*;
+use crate::routes::api;
 use leptos::*;
 
 #[component]
 pub fn Ideas(cx: Scope) -> impl IntoView {
+    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
+
+    let (search, set_search) = create_signal(cx, "".to_string());
     //<svelte:window on:keyup={focusSearch} /> ?
     view! { cx,
         <section class="mx-auto mb-16 flex max-w-2xl flex-col items-start justify-center px-4 sm:px-8">
@@ -12,8 +17,13 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
             </p>
             <div class="relative mb-4 w-full">
                 <input
-                  ria-label="Search articles"
+                  //ria-label="Search articles"
                   type="text"
+                  prop:value={move || search()}
+                  on:input=move |e| {
+                    let val = event_target_value(&e);
+                    set_search(val);
+                  }
                   //bind:value={$search}
                   //bind:this={inputEl}
                   //on:focus={loadsearchFn}
@@ -60,24 +70,40 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
 
             // you can hardcode yourmost popular posts or pinned post here if you wish
             //{#if !$search && !$selectedCategories?.length}
-                //<MostPopular />
-                <h3 class="mt-8 mb-4 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
-                    "All Posts"
-                </h3>
+            {move || {
+                if search().is_empty() {
+                    view! { cx,
+                        //<MostPopular />
+                        <h3 class="mt-8 mb-4 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
+                            "All Posts"
+                        </h3>
+                    }.into_any()
+                } else {
+                        view!{cx, <div />}.into_any()
+                }
+            }}
             //{/if}
 
             //{#if list?.length}
+            <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
                 <ul class="">
                     //{#each list as item}
-                        <li class="mb-8 text-lg">
-                            //<code class="mr-4">{item.data.date}</code>
-                            //<IndexCard
-                            //  href={item.slug}
-                            //  title={item.title}
-                            //  stringData={new Date(item.date).toISOString().slice(0, 10)}
-                            //  ghMetadata={item.ghMetadata}
-                            //  {item}
-                            //>
+                    { move || {
+                    posts.read().map(move |posts| match posts {
+                        Err(e) => {
+                            vec![view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_any()]
+                        }
+                        Ok(posts) => {
+                            posts.into_iter().map(move |post| {
+                            view! { cx,
+                            <li class="mb-8 text-lg">
+                                <code class="mr-4">
+                                    {&post.date}
+                                </code>
+                                <IndexCard
+                                  post={post}
+                                  //ghMetadata={item.ghMetadata}
+                                />
                                 //{#if item.highlightedResults}
                                 //    <span class="italic">
                                 //        {@html item.highlightedResults}
@@ -87,6 +113,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                                 //{/if}
                             //</IndexCard>
                         </li>
+                            }.into_any()}).collect::<Vec<_>>()}}).unwrap_or_default()}}
                     //{/each}
                 </ul>
                 //{#if isTruncated}
@@ -114,6 +141,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
             //{:else}
                 <div class="prose dark:prose-invert">"No blogposts found!"</div>
             //{/if}
+            </Suspense>
         </section>
     }
 }
