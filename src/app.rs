@@ -27,6 +27,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Routes>
                     <Route path="" view=|cx| view! { cx, <Homepage /> } />
                     <Route path="ideas/" view=|cx| view! { cx, <Ideas /> } />
+                    //<Route path="*" element=move |_cx| view! { cx, <PageNotFound/> } />
                 </Routes>
             </main>
         </Router>

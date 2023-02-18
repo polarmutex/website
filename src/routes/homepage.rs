@@ -43,7 +43,7 @@ pub fn Homepage(cx: Scope) -> impl IntoView {
                 </div>
             </section>
 
-            <LatestPosts {items} />
+            <LatestPosts />
         </div>
     }
 }
