@@ -1,4 +1,5 @@
 use crate::components::nav::*;
+use crate::routes::homepage::*;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -7,20 +8,6 @@ use leptos_router::*;
 pub fn App(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
-
-    // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(cx, 0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
-
-    let toggle_dark_class = |_| {
-        let document = document();
-        //document.body().expect("reason").class_list().toggle("dark");
-        document
-            .document_element()
-            .expect("reason")
-            .class_list()
-            .toggle("dark");
-    };
 
     view! {
         cx,
@@ -36,15 +23,9 @@ pub fn App(cx: Scope) -> impl IntoView {
 
         <Router>
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
-                // sets the document title
-                <Title text="Welcome to Leptos"/>
-
-                //<DarkModeToggle/>
-                <h1>"Welcome to Leptos!"</h1>
-                //<div class="bg-blue dark:bg-white">
-                <button class="text-black dark:text-blue-400" on:click=on_click>"Click Me: " {count}</button>
-                <button on:click=toggle_dark_class>"Toggle dark mode"</button>
-                //</div>
+                <Routes>
+                    <Route path="" view=|cx| view! { cx, <Homepage /> } />
+                </Routes>
             </main>
         </Router>
 
