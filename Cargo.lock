@@ -274,6 +274,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "619743e34b5ba4e9703bba34deac3427c72507c7159f5fd030aea8cac0cfe341"
 
 [[package]]
+name = "async-recursion"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3b015a331cc64ebd1774ba119538573603427eaace0a1950c423ab971f903796"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "async-trait"
 version = "0.1.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -337,6 +348,7 @@ dependencies = [
  "cfg-if",
  "console_error_panic_hook",
  "console_log",
+ "futures 0.3.26",
  "leptos",
  "leptos_actix",
  "leptos_meta",
@@ -907,9 +919,9 @@ dependencies = [
 
 [[package]]
 name = "http"
-version = "0.2.8"
+version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75f43d41e26995c17e71ee126451dd3941010b0514a81a9d11f3b341debc2399"
+checksum = "bd6effc99afb63425aff9b05836f029929e345a6148a14b7ecd5ab67af944482"
 dependencies = [
  "bytes 1.4.0",
  "fnv",
@@ -1021,8 +1033,8 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "leptos"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "cfg-if",
  "leptos_config",
@@ -1036,12 +1048,13 @@ dependencies = [
 
 [[package]]
 name = "leptos_actix"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "actix-web",
  "futures 0.3.26",
  "leptos",
+ "leptos_integration_utils",
  "leptos_meta",
  "leptos_router",
  "parking_lot",
@@ -1050,8 +1063,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_config"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "config",
  "fs",
@@ -1063,9 +1076,10 @@ dependencies = [
 
 [[package]]
 name = "leptos_dom"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
+ "async-recursion",
  "cfg-if",
  "drain_filter_polyfill",
  "educe",
@@ -1088,9 +1102,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "leptos_integration_utils"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
+dependencies = [
+ "futures 0.3.26",
+ "leptos",
+ "leptos_config",
+ "leptos_meta",
+ "leptos_router",
+]
+
+[[package]]
 name = "leptos_macro"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "cfg-if",
  "convert_case 0.6.0",
@@ -1110,8 +1136,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_meta"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "cfg-if",
  "leptos",
@@ -1123,8 +1149,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_reactive"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "base64 0.21.0",
  "cfg-if",
@@ -1144,8 +1170,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_router"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "cfg-if",
  "common_macros",
@@ -1169,8 +1195,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_server"
-version = "0.2.0-alpha"
-source = "git+https://github.com/gbj/leptos#76a74ecde25f89f12029ba675ee30f3caeff89a5"
+version = "0.2.0-alpha2"
+source = "git+https://github.com/gbj/leptos#487dba90d83b6d8a35faac5ec6632b59dbda654b"
 dependencies = [
  "ciborium",
  "form_urlencoded",

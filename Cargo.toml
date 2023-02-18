@@ -12,6 +12,7 @@ actix-web = { version = "4", optional = true, features = ["openssl", "macros"] }
 cfg-if = "1"
 console_error_panic_hook = "0.1"
 console_log = "0.2"
+futures = "0.3.26"
 leptos = { git = "https://github.com/gbj/leptos", default-features = false, features = ["serde"] }
 leptos_actix = { git = "https://github.com/gbj/leptos", default-features = false, optional = true }
 leptos_meta = { git = "https://github.com/gbj/leptos", default-features = false }
@@ -24,14 +25,7 @@ web-sys = { version = "0.3", features = ["AbortController", "AbortSignal", "Html
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = [
-  "dep:actix-files",
-  "dep:actix-web",
-  "dep:leptos_actix",
-  "leptos/ssr",
-  "leptos_meta/ssr",
-  "leptos_router/ssr",
-]
+ssr = ["dep:actix-files", "dep:actix-web", "dep:leptos_actix", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr"]
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
