@@ -28,7 +28,7 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                     <NavLink href="/">"Home"</NavLink>
                 </li>
                 <li>
-                    <NavLink href="/blog">"Blog"</NavLink>
+                    <NavLink href="/ideas">"Ideas"</NavLink>
                 </li>
                 <li>
                     <NavLink href="/about">"About"</NavLink>

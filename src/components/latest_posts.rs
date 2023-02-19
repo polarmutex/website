@@ -11,7 +11,7 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
             <h3 id="latest" class="mb-6 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
                 "Latest Posts"
             </h3>
-             <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
+            <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
                 <ul class="space-y-2 text-white">
                 { move || {
                     posts.read().map(move |posts| match posts {
@@ -24,7 +24,7 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
                                 <li>
                                     <a class="font-bold" data-sveltekit-preload-data href={post.title.clone()}>{post.title}</a> //data-sveltekit-preload
                                     <span class="hidden text-xs text-black dark:text-gray-400 sm:inline">
-                                        "2023-da-te"//{new Date(item.date).toISOString().slice(0, 10)}
+                                        " 2023-da-te"//{new Date(item.date).toISOString().slice(0, 10)}
                                     </span>
                                 </li>
                                 }.into_any()

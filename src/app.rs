@@ -4,6 +4,7 @@ use crate::routes::ideas::*;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+//use leptos_reactive::scope::Scope;
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
