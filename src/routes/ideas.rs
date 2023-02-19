@@ -4,9 +4,33 @@ use leptos::*;
 
 #[component]
 pub fn Ideas(cx: Scope) -> impl IntoView {
-    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
+    let posts_list = create_server_action::<api::GetPosts>(cx);
+    posts_list.dispatch(api::GetPosts {});
+    let value = posts_list.value();
+
+    let posts = move || {
+        value.with(|value| match value {
+            None => vec![],
+            Some(Ok(s)) => s.to_owned(),
+            Some(Err(_)) => vec![],
+        })
+    };
 
     let (search, set_search) = create_signal(cx, "".to_string());
+
+    let list = create_resource(
+        cx,
+        move || search(),
+        move |search| async move {
+            posts()
+                .into_iter()
+                .filter(|post| post.title.contains(&search))
+                .collect::<Vec<_>>()
+        },
+    );
+
+    //let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
+
     //<svelte:window on:keyup={focusSearch} /> ?
     view! { cx,
         <section class="mx-auto mb-16 flex max-w-2xl flex-col items-start justify-center px-4 sm:px-8">
@@ -88,32 +112,38 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
             <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
                 <ul class="">
                     //{#each list as item}
-                    { move || {
-                    posts.read().map(move |posts| match posts {
-                        Err(e) => {
-                            vec![view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_any()]
-                        }
-                        Ok(posts) => {
-                            posts.into_iter().map(move |post| {
-                            view! { cx,
-                            <li class="mb-8 text-lg">
-                                <code class="mr-4">
-                                    {&post.date}
-                                </code>
-                                <IndexCard
-                                  post={post}
-                                  //ghMetadata={item.ghMetadata}
-                                />
-                                //{#if item.highlightedResults}
-                                //    <span class="italic">
-                                //        {@html item.highlightedResults}
-                                //    </span>
-                                //{:else}
-                                //    {item.description}
-                                //{/if}
-                            //</IndexCard>
-                        </li>
-                            }.into_any()}).collect::<Vec<_>>()}}).unwrap_or_default()}}
+                    {move || {
+                            list.read()
+                                .map(move |list| {
+                                        if list.is_empty() {
+                                            vec![view! { cx, <p>"No tasks were found."</p> }.into_any()]
+                                        } else {
+                                            list
+                                                .into_iter()
+                                                .map(move |post| {
+                                                    view! {
+                                                        cx,
+                                                        <li class="mb-8 text-lg">
+                                                            <IndexCard
+                                                              post={post}
+                                                              //ghMetadata={item.ghMetadata}
+                                                            />
+                                                            //{#if item.highlightedResults}
+                                                            //    <span class="italic">
+                                                            //        {@html item.highlightedResults}
+                                                            //    </span>
+                                                            //{:else}
+                                                            //    {item.description}
+                                                            //{/if}
+                                                        </li>
+                                                    }
+                                                    .into_any()
+                                                })
+                                                .collect::<Vec<_>>()
+                                        }
+                                }
+                            )}}
+
                     //{/each}
                 </ul>
                 //{#if isTruncated}
