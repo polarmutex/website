@@ -1,4 +1,5 @@
 use crate::components::nav::*;
+use crate::routes::api;
 use crate::routes::homepage::*;
 use crate::routes::ideas::*;
 use leptos::*;
@@ -11,22 +12,32 @@ pub fn App(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 
+    let (prefers_dark, set_prefers_dark) = create_signal(cx, true);
+
+    let color_scheme = move || {
+        if prefers_dark() {
+            "dark".to_string()
+        } else {
+            "".to_string()
+        }
+    };
+
     view! {
         cx,
+        <Html class=color_scheme />
         <Body class="vsc-initialized bg-white text-white dark:bg-gray-900 dark:text-black"/>
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/website.css"/>
 
-        <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
-            <Nav />
-        </div>
-
         <Router>
+            <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
+                <Nav setter=set_prefers_dark />
+            </div>
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
                 <Routes>
-                    <Route path="" view=|cx| view! { cx, <Homepage /> } />
+                    <Route path="" view=|cx| view! { cx, <Homepage /> } ssr=SsrMode::Async />
                     <Route path="ideas/" view=|cx| view! { cx, <Ideas /> } />
                     //<Route path="*" element=move |_cx| view! { cx, <PageNotFound/> } />
                 </Routes>

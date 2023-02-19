@@ -28,6 +28,21 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                 .collect::<Vec<_>>()
         },
     );
+    /* look into
+          let resource1 =
+        create_local_resource(cx, || (), |blah| async move { "foo" });
+
+    let resource2 = create_local_resource(
+        cx,
+        move || resource1,
+        |resource1| async move {
+            match resource1.with(|resource1| async move { "bar" }) {
+                None => async { "baz" }.await,
+                Some(fut) => fut.await,
+            }
+        },
+    );
+    */
 
     //let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
 

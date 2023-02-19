@@ -17,10 +17,14 @@ futures = "0.3.26"
 # leptos_actix = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false, optional = true }
 # leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false }
 # leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false }
-leptos = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["serde"] }
-leptos_actix = { git = "https://github.com/leptos-rs/leptos", default-features = false, optional = true }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false }
+leptos = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, features = ["serde"] }
+leptos_actix = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, optional = true }
+leptos_meta = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
+leptos_router = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
+# leptos = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["serde"] }
+# leptos_actix = { git = "https://github.com/leptos-rs/leptos", default-features = false, optional = true }
+# leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false }
+# leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false }
 log = "0.4"
 serde = "1"
 simple_logger = "4"

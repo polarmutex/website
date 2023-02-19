@@ -1,21 +1,66 @@
+use crate::routes::api;
 use leptos::*;
+use leptos_router::ToHref;
+use leptos_router::{ActionForm, ActionFormProps};
+use wasm_bindgen::JsCast;
+
+#[cfg(not(feature = "ssr"))]
+fn initial_prefers_dark(_cx: Scope) -> bool {
+    let doc = document().unchecked_into::<web_sys::HtmlDocument>();
+    let cookie = doc.cookie().unwrap_or_default();
+    if cookie.contains("darkmode=") {
+        cookie.contains("darkmode=true")
+    } else {
+        true
+    }
+}
+
+#[cfg(feature = "ssr")]
+fn initial_prefers_dark(cx: Scope) -> bool {
+    use_context::<actix_web::HttpRequest>(cx)
+        .and_then(|req| {
+            req.cookies()
+                .map(|cookies| {
+                    !cookies
+                        .iter()
+                        .any(|cookie| cookie.name() == "darkmode" && cookie.value() == "false")
+                })
+                .ok()
+        })
+        .unwrap_or(false)
+}
 
 #[component]
-pub fn Nav(cx: Scope) -> impl IntoView {
-    // Provides context that manages stylesheets, titles, meta tags, etc.
-    //provide_meta_context(cx);
+pub fn Nav(cx: Scope, setter: WriteSignal<bool>) -> impl IntoView {
+    let initial = initial_prefers_dark(cx);
 
-    let (isDark, set_isDark) = create_signal(cx, false);
+    let toggle_dark_mode_action = create_server_action::<api::ToggleDarkMode>(cx);
+    // input is `Some(value)` when pending, and `None` if not pending
+    let input = toggle_dark_mode_action.input();
+    // value contains most recently-returned value
+    let value = toggle_dark_mode_action.value();
 
-    let toggle_dark_class = move |_| {
-        let document = document();
-        //document.body().expect("reason").class_list().toggle("dark");
-        set_isDark(!isDark());
-        document
-            .document_element()
-            .expect("reason")
-            .class_list()
-            .toggle("dark");
+    let prefers_dark = move || {
+        match (input(), value()) {
+            // if there's some current input, use that optimistically
+            (Some(submission), _) => {
+                let res = submission.prefers_dark;
+                setter(res);
+                res
+            }
+            // otherwise, if there was a previous value confirmed by server, use that
+            (_, Some(Ok(value))) => {
+                let res = value;
+                setter(res);
+                res
+            }
+            // otherwise, use the initial value
+            _ => {
+                let res = initial;
+                setter(res);
+                res
+            }
+        }
     };
 
     view! {
@@ -66,13 +111,18 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                         />
                     </svg>
                 </a>
-                <button
+                <ActionForm action=toggle_dark_mode_action>
+                <input
+                type="hidden"
+                name="prefers_dark"
+                value=move || (!prefers_dark()).to_string()
+            />
+               <button
                     aria-label="Toggle Dark Mode"
                     class="ml-1 flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-400 ring-yellow-400
                     transition-all hover:ring-2 dark:bg-yellow-800"
-                    on:click=toggle_dark_class
                 >
-                {move || if isDark() {
+                {move || if prefers_dark() {
                                        view! {cx,
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -109,6 +159,7 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                                        }
                      }}
         </button>
+        </ActionForm>
             </div>
         </nav>
     }
