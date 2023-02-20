@@ -4,28 +4,66 @@ use leptos::*;
 
 #[component]
 pub fn Ideas(cx: Scope) -> impl IntoView {
-    let posts_list = create_server_action::<api::GetPosts>(cx);
-    posts_list.dispatch(api::GetPosts {});
-    let value = posts_list.value();
+    //let posts_list = create_server_action::<api::GetPosts>(cx);
+    //posts_list.dispatch(api::GetPosts {});
+    //let value = posts_list.value();
 
-    let posts = move || {
-        value.with(|value| match value {
-            None => vec![],
-            Some(Ok(s)) => s.to_owned(),
-            Some(Err(_)) => vec![],
-        })
-    };
+    //let posts = move || {
+    //    value.with(|value| match value {
+    //        None => vec![],
+    //        Some(Ok(s)) => s.to_owned(),
+    //        Some(Err(_)) => vec![],
+    //    })
+    //};
+    /*let posts = create_resource(
+        cx,
+        move || (),
+        move |_| async move {
+            match api::get_posts(cx).await {
+                //None => vec![],
+                Err(_e) => vec![],
+                Ok(s) => s,
+            }
+        },
+    );*/
+    let posts = create_resource(
+        cx,
+        || (),
+        move |_| async move {
+            match api::get_posts(cx, "".to_string()).await {
+                Ok(s) => s,
+                _ => vec![],
+            }
+        },
+    );
 
     let (search, set_search) = create_signal(cx, "".to_string());
 
-    let list = create_resource(
+    /*let filtered_posts = create_resource(
         cx,
-        move || search(),
-        move |search| async move {
-            posts()
-                .into_iter()
-                .filter(|post| post.title.contains(&search))
-                .collect::<Vec<_>>()
+        move || (posts(), search()),
+        move |(posts, search)| async move {
+            if let Some(posts) = posts {
+                posts
+                    .into_iter()
+                    .filter(|post| post.title.contains(&search))
+                    .collect::<Vec<_>>()
+            } else {
+                vec![]
+            }
+        },
+    );*/
+    let filtered_posts = create_local_resource(
+        cx,
+        move || (search(), posts()),
+        move |(search, posts)| async move {
+            match posts {
+                None => vec![],
+                Some(s) => s
+                    .into_iter()
+                    .filter(|post| post.title.contains(&search))
+                    .collect(),
+            }
         },
     );
     /* look into
@@ -128,8 +166,8 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                 <ul class="">
                     //{#each list as item}
                     {move || {
-                            list.read()
-                                .map(move |list| {
+                                 match filtered_posts() {
+                                     Some(list) => {
                                         if list.is_empty() {
                                             vec![view! { cx, <p>"No tasks were found."</p> }.into_any()]
                                         } else {
@@ -156,8 +194,10 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                                                 })
                                                 .collect::<Vec<_>>()
                                         }
-                                }
-                            )}}
+                                     },
+                                     None => vec![view! { cx, <p>"No tasks were found."</p> }.into_any()],
+                             }
+                             }}
 
                     //{/each}
                 </ul>

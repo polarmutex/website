@@ -1,6 +1,9 @@
 use cfg_if::cfg_if;
+use glob::glob;
+use gray_matter;
 use leptos::*;
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 cfg_if! {
 
@@ -29,16 +32,40 @@ cfg_if! {
     }
 }
 
+const _404_PAGE: &str = "---\ntitle = 404\n---\n404 Not found.";
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct FrontMatter {
+    pub title: String,
+    pub description: String,
+    pub published: String,
+    pub featured: bool,
+    pub draft: bool,
+    pub category: String,
+    //pub slug: String,
+}
+
 #[server(GetPosts, "/api")]
-pub async fn get_posts(_cx: Scope) -> Result<Vec<Post>, ServerFnError> {
-    use futures::TryStreamExt;
-    let mut posts: Vec<Post> = Vec::new();
-    posts.push(Post {
-        id: 20,
-        title: String::from("hey I am here"),
-        slug: String::from("This is a slug"),
-        date: String::from("2023-02-02"),
-    });
+pub async fn get_posts(_cx: Scope, filter: String) -> Result<Vec<Post>, ServerFnError> {
+    let mut posts: Vec<Post> = glob("src/content/posts/*.md")
+        .unwrap()
+        .filter_map(Result::ok)
+        .map(|filename| {
+            let page = &fs::read_to_string(filename).unwrap_or(_404_PAGE.to_string());
+            let front_matter: gray_matter::Matter<gray_matter::engine::YAML> =
+                gray_matter::Matter::new();
+            let front_matter: gray_matter::ParsedEntity = front_matter.parse(&page);
+            let front_matter: FrontMatter = front_matter.data.unwrap().deserialize().unwrap();
+
+            Post {
+                id: 20,
+                title: front_matter.title,
+                slug: "my-slug".to_string(),
+                date: front_matter.published,
+            }
+        })
+        .collect();
+    //std::thread::sleep(std::time::Duration::from_millis(1000));
     Ok(posts)
 }
 

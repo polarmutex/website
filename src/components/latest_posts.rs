@@ -3,7 +3,7 @@ use leptos::*;
 
 #[component]
 pub fn LatestPosts(cx: Scope) -> impl IntoView {
-    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
+    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx, "".to_string()));
 
     view! {
        cx,
