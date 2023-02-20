@@ -4,7 +4,7 @@ description: An introduction to this site and a post to kick things off
 published: 2023-02-10
 featured: true
 draft: false
-category: 'post'
+category: post
 ---
 
 Welcome, I want to use this site to publish my thoughts and ideas. A place to practice getting my thoughts onto "paper". And to share my work in a more public place.
