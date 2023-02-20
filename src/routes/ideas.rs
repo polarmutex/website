@@ -169,7 +169,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                                  match filtered_posts() {
                                      Some(list) => {
                                         if list.is_empty() {
-                                            vec![view! { cx, <p>"No tasks were found."</p> }.into_any()]
+                                            vec![view! { cx, <div class="prose dark:prose-invert">"No blogposts found!"</div> }.into_any()]
                                         } else {
                                             list
                                                 .into_iter()
@@ -195,36 +195,36 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                                                 .collect::<Vec<_>>()
                                         }
                                      },
-                                     None => vec![view! { cx, <p>"No tasks were found."</p> }.into_any()],
+                                     None => vec![view! { cx, <div class="prose dark:prose-invert">"No blogposts found!"</div>}.into_any()],
                              }
                              }}
 
                     //{/each}
                 </ul>
                 //{#if isTruncated}
-                    <div class="flex justify-center">
-                        <button
-                          //on:click={() => (isTruncated = false)}
-                          class="inline-block rounded bg-blue-100 p-4 text-lg font-bold tracking-tight text-black hover:text-yellow-900 dark:bg-blue-900 dark:text-white hover:dark:text-yellow-200 md:text-2xl"
-                        >
-                            "Load More Posts..."
-                        </button>
-                    </div>
+                //    <div class="flex justify-center">
+                //        <button
+                //          //on:click={() => (isTruncated = false)}
+                //          class="inline-block rounded bg-blue-100 p-4 text-lg font-bold tracking-tight text-black hover:text-yellow-900 dark:bg-blue-900 dark:text-white hover:dark:text-yellow-200 md:text-2xl"
+                //        >
+                //            "Load More Posts..."
+                //        </button>
+                //    </div>
                 //{/if}
             //{:else if $search}
-                <div class="prose dark:prose-invert">
-                    "No posts found for "
-                    //<code>{$search}</code>
-                    "."
-                </div>
-                <button
-                  class="bg-slate-500 p-2"
-                  //on:click={() => ($search = '')}
-                >
-                    "Clear your search"
-                </button>
+                //<div class="prose dark:prose-invert">
+                //    "No posts found for "
+                //    //<code>{$search}</code>
+                //    "."
+                //</div>
+                //<button
+                //  class="bg-slate-500 p-2"
+                //  //on:click={() => ($search = '')}
+                //>
+                //    "Clear your search"
+                //</button>
             //{:else}
-                <div class="prose dark:prose-invert">"No blogposts found!"</div>
+                //<div class="prose dark:prose-invert">"No blogposts found!"</div>
             //{/if}
             </Suspense>
         </section>
