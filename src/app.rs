@@ -29,7 +29,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/website.css"/>
+        <Stylesheet id="leptos" href="/pkg/brianryall_xyz.css"/>
 
         <Router>
             <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">

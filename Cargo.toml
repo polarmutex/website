@@ -42,7 +42,7 @@ ssr = ["dep:actix-files", "dep:actix-web", "dep:leptos_actix", "leptos/ssr", "le
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "website"
+output-name = "brianryall_xyz"
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written
@@ -82,4 +82,4 @@ lib-features = ["hydrate"]
 # If the --no-default-features flag should be used when compiling the lib target
 #
 # Optional. Defaults to false.
-lib-default-features = false
+lib-default-features = true
