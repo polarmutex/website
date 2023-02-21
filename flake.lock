@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "cargo-leptos": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1676950457,
+        "narHash": "sha256-pD/U9Baiz9qMrfIl3Pd6Q+ca2cLOiDihXL0zuBqdTWA=",
+        "owner": "benwis",
+        "repo": "cargo-leptos",
+        "rev": "cdaea0cca9774da30e0ad00a5f52d3231645f834",
+        "type": "github"
+      },
+      "original": {
+        "owner": "benwis",
+        "repo": "cargo-leptos",
+        "type": "github"
+      }
+    },
     "crane": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -325,6 +341,7 @@
     "root": {
       "inputs": {
         "advisory-db": "advisory-db",
+        "cargo-leptos": "cargo-leptos",
         "crane": "crane",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils_2",

@@ -16,6 +16,12 @@
       url = "github:zoni/obsidian-export/v22.11.0";
       flake = false;
     };
+    cargo-leptos = {
+      #url= "github:leptos-rs/cargo-leptos/v1.7";
+      #url = "github:polarmutex/cargo-leptos/fix-cache";
+      url = "github:benwis/cargo-leptos";
+      flake = false;
+    };
 
     flake-utils.url = "github:numtide/flake-utils";
 
@@ -53,7 +59,16 @@
 
       inherit (pkgs) lib;
 
-      craneLib = crane.lib.${system};
+      craneLib = let
+        rust-toolchain =
+          pkgs.rust-bin.selectLatestNightlyWith
+          (toolchain:
+            toolchain.default.override {
+              extensions = ["rust-src"];
+              targets = ["wasm32-unknown-unknown"];
+            });
+      in
+        (crane.lib.${system}).overrideToolchain rust-toolchain;
       src = craneLib.cleanCargoSource ./.;
 
       # Common arguments can be set here to avoid repeating them later
@@ -63,6 +78,10 @@
         buildInputs =
           [
             # Add additional build inputs here
+            cargo-leptos
+            pkgs.binaryen
+            pkgs.sass
+            pkgs.cargo-generate
           ]
           ++ lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
@@ -78,22 +97,27 @@
       # artifacts from above.
       my-crate = craneLib.buildPackage (commonArgs
         // {
+          buildPhaseCargoCommand = "RUST_BACKTRACE=1 cargo leptos build --release";
+          #cargoBuildCommand = "cargo leptos build --release";
           inherit cargoArtifacts;
         });
 
       cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
         pname = "cargo-leptos";
-        version = "0.1.7";
+        #version = "0.1.7";
+        version = "0.1.8.1";
         buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
 
-        src = pkgs.fetchFromGitHub {
-          owner = "leptos-rs";
-          repo = pname;
-          rev = version;
-          hash = "sha256-Z7JRTsB3krXAKHbdezaTjR6mUQ07+e4pYtpaMLuoR8I=";
-        };
+        src = inputs.cargo-leptos; #pkgs.fetchFromGitHub {
+        #owner = "leptos-rs";
+        #owner = "polarmutex";
+        #repo = pname;
+        #rev = version;
+        #rev = "fix-cache";
+        #hash = "sha256-5zG4dtrU2yb9tywkLr2U98AGN+yMzIcoVMVr9v6OFY0=";
+        #};
 
-        cargoSha256 = "sha256-MqEErweIHHF8w7WANfh8OpzvS774aIfcfkEOwEofSqw=";
+        cargoSha256 = "sha256-fi5o8hXDbrgeVG4ctgewH5Ii35TZcZbCKblmsh3Bh6k=";
 
         nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
@@ -189,6 +213,7 @@
           openssl
           pkg-config
           binaryen
+          wasm-pack
           nodePackages.tailwindcss
         ];
         packages = [
