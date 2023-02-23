@@ -21,14 +21,14 @@ gray_matter = "0.2.5"
 # leptos_actix = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false, optional = true }
 # leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false }
 # leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "fix-suspense", default-features = false }
-leptos = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, features = ["serde"] }
-leptos_actix = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, optional = true }
-leptos_meta = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
-leptos_router = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
-# leptos = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["serde"] }
-# leptos_actix = { git = "https://github.com/leptos-rs/leptos", default-features = false, optional = true }
-# leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false }
-# leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false }
+# leptos = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, features = ["serde"] }
+# leptos_actix = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, optional = true }
+# leptos_meta = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
+# leptos_router = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
+leptos = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["serde"] }
+leptos_actix = { git = "https://github.com/leptos-rs/leptos", default-features = false, optional = true }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false }
+leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false }
 log = "0.4"
 serde = "1"
 simple_logger = "4"
@@ -49,7 +49,7 @@ site-root = "target/site"
 # Defaults to pkg
 site-pkg-dir = "pkg"
 # [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
-style-file = "./src/styles/style.css"
+style-file = "src/styles/style.css"
 # [Optional] Files in the asset-dir will be copied to the site-root directory
 assets-dir = "assets"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.

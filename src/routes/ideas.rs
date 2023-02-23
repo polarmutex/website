@@ -55,7 +55,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
     );*/
     let filtered_posts = create_local_resource(
         cx,
-        move || (search(), posts()),
+        move || (search(), posts.read(cx)),
         move |(search, posts)| async move {
             match posts {
                 None => vec![],
@@ -166,7 +166,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                 <ul class="">
                     //{#each list as item}
                     {move || {
-                                 match filtered_posts() {
+                                 match filtered_posts.read(cx) {
                                      Some(list) => {
                                         if list.is_empty() {
                                             vec![view! { cx, <div class="prose dark:prose-invert">"No blogposts found!"</div> }.into_any()]

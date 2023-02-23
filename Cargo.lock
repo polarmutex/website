@@ -1179,8 +1179,8 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "leptos"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "cfg-if",
  "leptos_config",
@@ -1194,8 +1194,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_actix"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "actix-web",
  "futures 0.3.26",
@@ -1209,8 +1209,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_config"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "config",
  "fs",
@@ -1222,8 +1222,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_dom"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "async-recursion",
  "cfg-if",
@@ -1249,8 +1249,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_integration_utils"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "futures 0.3.26",
  "leptos",
@@ -1261,8 +1261,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_macro"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "cfg-if",
  "convert_case 0.6.0",
@@ -1282,8 +1282,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_meta"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "cfg-if",
  "leptos",
@@ -1295,8 +1295,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_reactive"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "base64 0.21.0",
  "cfg-if",
@@ -1316,8 +1316,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_router"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "cfg-if",
  "common_macros",
@@ -1341,8 +1341,8 @@ dependencies = [
 
 [[package]]
 name = "leptos_server"
-version = "0.2.0-alpha2"
-source = "git+https://github.com/polarmutex/leptos?branch=html-class#292ea7aeeaee14b63dff12f61f5f8c496cd624b4"
+version = "0.2.0-beta"
+source = "git+https://github.com/leptos-rs/leptos#46f6deddbfdac0a7260a7e32306a897d3a3dce37"
 dependencies = [
  "ciborium",
  "form_urlencoded",

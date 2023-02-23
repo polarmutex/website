@@ -14,7 +14,7 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
             <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
                 <ul class="space-y-2 text-white">
                 { move || {
-                    posts.read().map(move |posts| match posts {
+                    posts.read(cx).map(move |posts| match posts {
                         Err(e) => {
                             vec![view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_any()]
                         }
