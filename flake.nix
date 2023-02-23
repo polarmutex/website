@@ -94,7 +94,8 @@
 
       # Build *just* the cargo dependencies, so we can reuse
       # all of that work (e.g. via cachix) when running in CI
-      cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+      cargoArtifacts =
+        craneLib.buildDepsOnly commonArgs;
 
       # Build the actual crate itself, reusing the dependency
       # artifacts from above.
@@ -105,10 +106,7 @@
           inherit cargoArtifacts;
           installPhaseCommand = ''
             mkdir -p $out
-            cp target/server/release/brianryall-xyz $out
             cp Cargo.toml $out
-            mkdir $out/pkg
-            cp -r target/site/pkg $out
           '';
         });
       #my-crate = craneLib.buildPackage (commonArgs
@@ -221,7 +219,7 @@
 
         # Extra inputs can be added here
         nativeBuildInputs = with pkgs; [
-          #cargo
+          cargo
           (rust-bin.selectLatestNightlyWith
             (toolchain:
               toolchain.default.override {
@@ -231,6 +229,8 @@
           cargo-leptos
           sass
           nodejs
+          jq
+          cachix
           openssl
           pkg-config
           binaryen
