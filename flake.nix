@@ -69,7 +69,8 @@
             });
       in
         (crane.lib.${system}).overrideToolchain rust-toolchain;
-      src = craneLib.cleanCargoSource ./.;
+      #src = craneLib.cleanCargoSource ./.;
+      src = ./.;
 
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
@@ -82,6 +83,8 @@
             pkgs.binaryen
             pkgs.sass
             pkgs.cargo-generate
+            pkgs.openssl
+            pkgs.pkg-config
           ]
           ++ lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
@@ -95,12 +98,30 @@
 
       # Build the actual crate itself, reusing the dependency
       # artifacts from above.
-      my-crate = craneLib.buildPackage (commonArgs
+      my-crate = craneLib.mkCargoDerivation (commonArgs
         // {
-          buildPhaseCargoCommand = "RUST_BACKTRACE=1 cargo leptos build --release";
+          buildPhaseCargoCommand = "cargo leptos build --release";
           #cargoBuildCommand = "cargo leptos build --release";
           inherit cargoArtifacts;
+          installPhaseCommand = ''
+            mkdir -p $out
+            cp target/server/release/brianryall-xyz $out
+            cp Cargo.toml $out
+            mkdir $out/pkg
+            cp -r target/site/pkg $out
+          '';
         });
+      #my-crate = craneLib.buildPackage (commonArgs
+      #  // {
+      #    buildPhaseCargoCommand = "RUST_BACKTRACE=1 cargo leptos build --release";
+      #    #cargoBuildCommand = "cargo leptos build --release";
+      #    inherit cargoArtifacts;
+      #    installPhaseCommand = ''
+      #      cp target/server/release/brianryall-xyz $out
+      #      mkdir $out/site
+      #      cp -r target/site $out/site
+      #    '';
+      #  });
 
       cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
         pname = "cargo-leptos";

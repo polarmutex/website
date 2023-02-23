@@ -19,11 +19,11 @@
     "cargo-leptos": {
       "flake": false,
       "locked": {
-        "lastModified": 1676950457,
-        "narHash": "sha256-pD/U9Baiz9qMrfIl3Pd6Q+ca2cLOiDihXL0zuBqdTWA=",
+        "lastModified": 1677102999,
+        "narHash": "sha256-F2ffGUUOqj4szoKA1JQ6ZAGm7OwRQeNvf8DIJV952fo=",
         "owner": "benwis",
         "repo": "cargo-leptos",
-        "rev": "cdaea0cca9774da30e0ad00a5f52d3231645f834",
+        "rev": "058774e7511c21ff77f2b1f46e94217aad51f20a",
         "type": "github"
       },
       "original": {
