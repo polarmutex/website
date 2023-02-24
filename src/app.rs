@@ -1,7 +1,7 @@
 use crate::components::nav::*;
-use crate::routes::api;
 use crate::routes::homepage::*;
 use crate::routes::ideas::*;
+use cfg_if::cfg_if;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -30,6 +30,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/brianryall_xyz.css"/>
+        <Umami />
 
         <Router>
             <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
@@ -77,5 +78,22 @@ pub fn App(cx: Scope) -> impl IntoView {
                 " template."
             </p>
         </footer>
+    }
+}
+
+#[component(transparent)]
+pub fn Umami(cx: Scope) -> impl IntoView {
+    let meta = use_head(cx);
+    let id = "polar-link-1".to_string();
+
+    let builder_el = leptos::leptos_dom::html::script(cx)
+        .attr("async", true)
+        .attr("defer", true)
+        .attr("data-website-id", "e067c6cf-e744-4a39-b69c-fe471533edf5")
+        .attr("src", "https://umami.brianryall.xyz/umami.js");
+
+    //if cfg!(not(debug_assertions)) {
+    if cfg!(not(debug_assertions)) {
+        meta.tags.register(cx, id, builder_el.into_any());
     }
 }
