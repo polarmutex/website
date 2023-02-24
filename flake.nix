@@ -107,6 +107,8 @@
           installPhaseCommand = ''
             mkdir -p $out
             cp Cargo.toml $out
+            mkdir -p $out/content/posts
+            cp -r content/posts/* $out/content/posts/.
           '';
         });
       #my-crate = craneLib.buildPackage (commonArgs
@@ -229,13 +231,13 @@
           cargo-leptos
           sass
           nodejs
-          jq
-          cachix
           openssl
           pkg-config
           binaryen
           wasm-pack
           nodePackages.tailwindcss
+          jq
+          cachix
         ];
         packages = [
         ];

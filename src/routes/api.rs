@@ -47,7 +47,7 @@ pub struct FrontMatter {
 
 #[server(GetPosts, "/api")]
 pub async fn get_posts(_cx: Scope, filter: String) -> Result<Vec<Post>, ServerFnError> {
-    let mut posts: Vec<Post> = glob("src/content/posts/*.md")
+    let mut posts: Vec<Post> = glob("content/posts/*.md")
         .unwrap()
         .filter_map(Result::ok)
         .map(|filename| {

@@ -1,3 +1,3 @@
 
 cache:
-	nix build --json .#site | jq -r '.[].outputs | to_entries[].value' | cachix push polarmutex
+	nix build --json .# | jq -r '.[].outputs | to_entries[].value' | cachix push polarmutex
