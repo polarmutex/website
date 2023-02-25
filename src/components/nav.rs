@@ -31,7 +31,7 @@ fn initial_prefers_dark(cx: Scope) -> bool {
         .flat_map(|cookie_header| cookie_header.split(';'))
         .filter_map(|cookie_header| Cookie::parse_encoded(cookie_header.trim()).ok())
         .filter(|cookie| cookie.name() == "darkmode")
-        .any(|cookie| cookie.value() == "false")
+        .any(|cookie| cookie.value() == "true")
 }
 
 #[component]
