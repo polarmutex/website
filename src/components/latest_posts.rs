@@ -3,7 +3,7 @@ use leptos::*;
 
 #[component]
 pub fn LatestPosts(cx: Scope) -> impl IntoView {
-    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx, "".to_string()));
+    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
 
     view! {
        cx,
@@ -22,9 +22,9 @@ pub fn LatestPosts(cx: Scope) -> impl IntoView {
                             posts.into_iter().map(move |post| {
                                 view! { cx,
                                 <li>
-                                    <a class="font-bold" data-sveltekit-preload-data href={post.title.clone()}>{post.title}</a> //data-sveltekit-preload
+                                    <a class="font-bold" data-sveltekit-preload-data href={format!("/ideas/{}",post.slug)}>{post.title}</a> //data-sveltekit-preload
                                     <span class="hidden text-xs text-black dark:text-gray-400 sm:inline">
-                                        " 2023-da-te"//{new Date(item.date).toISOString().slice(0, 10)}
+                                        {format!(" {}", post.date)}
                                     </span>
                                 </li>
                                 }.into_any()

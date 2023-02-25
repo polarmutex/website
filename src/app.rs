@@ -1,8 +1,8 @@
 use crate::components::nav::*;
 use crate::errors::AppError;
 use crate::routes::homepage::*;
+use crate::routes::idea_page::*;
 use crate::routes::ideas::*;
-use cfg_if::cfg_if;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -48,8 +48,8 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
                 <Routes>
                     <Route path="" view=|cx| view! {cx, <Homepage/> }/>
-                    <Route path="/ideas" view=|cx| view! { cx, <Ideas /> }/>
-                    //<Route path="*" view=|cx| view! { cx ,<h1>"Page not found"</h1> }/>
+                    <Route path="/ideas" view=|cx| view! { cx, <Ideas /> } ssr=SsrMode::Async/>
+                    <Route path="/ideas/:slug" view=|cx| view! { cx, <IdeaPage /> } ssr=SsrMode::Async/>
                 </Routes>
             </main>
         </Router>
@@ -59,8 +59,8 @@ pub fn App(cx: Scope) -> impl IntoView {
             <div class="grid w-full max-w-2xl grid-cols-1 gap-4 px-4 pb-16 sm:grid-cols-2 sm:px-8">
                 <div class="flex flex-col space-y-4">
                     <a class="text-gray-500 transition hover:text-gray-300" href="/">"Home"</a>
-                    <a class="text-gray-500 transition hover:text-gray-300" href="/about">"About"</a>
-                    <a class="text-gray-500 transition hover:text-gray-300" href="/rss.xml" rel="external">"RSS"</a>
+                    //<a class="text-gray-500 transition hover:text-gray-300" href="/about">"About"</a>
+                    //<a class="text-gray-500 transition hover:text-gray-300" href="/rss.xml" rel="external">"RSS"</a>
                 </div>
                 <div class="flex flex-col space-y-4">
                     <a

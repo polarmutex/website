@@ -30,7 +30,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
         cx,
         || (),
         move |_| async move {
-            match api::get_posts(cx, "".to_string()).await {
+            match api::get_posts(cx).await {
                 Ok(s) => s,
                 _ => vec![],
             }

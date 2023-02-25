@@ -4,7 +4,7 @@ use leptos::*;
 #[component]
 pub fn IndexCard(cx: Scope, post: Post) -> impl IntoView {
     view! {cx,
-        <a class="w-full text-gray-900 hover:text-yellow-600 dark:text-gray-100 dark:hover:text-yellow-100 hover:no-underline" href="href">
+        <a class="w-full text-gray-900 hover:text-yellow-600 dark:text-gray-100 dark:hover:text-yellow-100 hover:no-underline" href={format!("/ideas/{}",post.slug)}>
             <div class="w-full">
                 <div class="flex flex-col justify-between md:flex-row">
                     <h4 class="flex-auto w-full mb-2 text-lg font-bold md:text-xl">
@@ -16,7 +16,7 @@ pub fn IndexCard(cx: Scope, post: Post) -> impl IntoView {
                 </p>
                 <div class="flex justify-between items-center gap-1 text-left text-gray-500 sm:justify-start sm:flex-row sm:gap-4 md:mb-0 md:text-sm">
                     //<!-- {JSON.stringify(item.readingTime)} -->
-                    //<p>{stringData}</p>
+                    <p>{post.date}</p>
                     //{#if item?.readingTime}
                         //<p class="hidden sm:inline-block">{item?.readingTime}</p>
                     //{/if}

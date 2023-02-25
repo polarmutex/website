@@ -1,7 +1,8 @@
 use http::status::StatusCode;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, Error, PartialEq, Serialize, Deserialize)]
 pub enum AppError {
     #[error("Not Found")]
     NotFound,
