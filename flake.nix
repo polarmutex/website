@@ -17,9 +17,9 @@
       flake = false;
     };
     cargo-leptos = {
-      #url= "github:leptos-rs/cargo-leptos/v1.7";
+      url = "github:leptos-rs/cargo-leptos/0.1.8";
       #url = "github:polarmutex/cargo-leptos/fix-cache";
-      url = "github:benwis/cargo-leptos";
+      #url = "github:benwis/cargo-leptos";
       flake = false;
     };
 
@@ -125,8 +125,7 @@
 
       cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
         pname = "cargo-leptos";
-        #version = "0.1.7";
-        version = "0.1.8.1";
+        version = "0.1.8";
         buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
 
         src = inputs.cargo-leptos; #pkgs.fetchFromGitHub {
@@ -138,14 +137,14 @@
         #hash = "sha256-5zG4dtrU2yb9tywkLr2U98AGN+yMzIcoVMVr9v6OFY0=";
         #};
 
-        cargoSha256 = "sha256-fi5o8hXDbrgeVG4ctgewH5Ii35TZcZbCKblmsh3Bh6k=";
+        cargoSha256 = "sha256-w/9W4DXbh4G5DZ8IGUz4nN3LEjHhL7HgybHqODMFzHw=";
 
         nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
         buildInputs = with pkgs;
           [openssl pkg-config]
           ++ lib.optionals stdenv.isDarwin [
-            Security
+            #Security
           ];
 
         doCheck = false; # integration tests depend on changing cargo config
