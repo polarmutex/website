@@ -1,6 +1,10 @@
 pub mod app;
 pub mod components;
+pub mod error_template;
+pub mod errors;
+pub mod fallback;
 pub mod routes;
+
 use cfg_if::cfg_if;
 
 cfg_if! {

@@ -17,17 +17,21 @@ fn initial_prefers_dark(_cx: Scope) -> bool {
 
 #[cfg(feature = "ssr")]
 fn initial_prefers_dark(cx: Scope) -> bool {
-    use_context::<actix_web::HttpRequest>(cx)
-        .and_then(|req| {
-            req.cookies()
-                .map(|cookies| {
-                    !cookies
-                        .iter()
-                        .any(|cookie| cookie.name() == "darkmode" && cookie.value() == "false")
-                })
-                .ok()
-        })
-        .unwrap_or(false)
+    use axum::http::header::COOKIE;
+    use axum_extra::extract::cookie::Cookie;
+    let req = match use_context::<leptos_axum::RequestParts>(cx) {
+        Some(req) => req,
+        None => return true,
+    };
+    //use_context::<http::Request>(cx)
+    req.headers
+        .get_all(COOKIE)
+        .iter()
+        .filter_map(|cookie_header| cookie_header.to_str().ok())
+        .flat_map(|cookie_header| cookie_header.split(';'))
+        .filter_map(|cookie_header| Cookie::parse_encoded(cookie_header.trim()).ok())
+        .filter(|cookie| cookie.name() == "darkmode")
+        .any(|cookie| cookie.value() == "false")
 }
 
 #[component]

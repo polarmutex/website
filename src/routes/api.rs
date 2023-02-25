@@ -71,8 +71,8 @@ pub async fn get_posts(_cx: Scope, filter: String) -> Result<Vec<Post>, ServerFn
 
 #[server(ToggleDarkMode, "/api")]
 pub async fn toggle_dark_mode(cx: Scope, prefers_dark: bool) -> Result<bool, ServerFnError> {
-    use actix_web::http::header::{HeaderMap, HeaderValue, SET_COOKIE};
-    use leptos_actix::{ResponseOptions, ResponseParts};
+    use axum::http::header::{HeaderMap, HeaderValue, SET_COOKIE};
+    use leptos_axum::{ResponseOptions, ResponseParts};
 
     let response =
         use_context::<ResponseOptions>(cx).expect("to have leptos_actix::ResponseOptions provided");

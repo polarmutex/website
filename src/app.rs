@@ -1,4 +1,5 @@
 use crate::components::nav::*;
+use crate::errors::AppError;
 use crate::routes::homepage::*;
 use crate::routes::ideas::*;
 use cfg_if::cfg_if;
@@ -6,6 +7,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 //use leptos_reactive::scope::Scope;
+use crate::error_template::{ErrorTemplate, ErrorTemplateProps};
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
@@ -32,15 +34,22 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/brianryall_xyz.css"/>
         <Umami />
 
-        <Router>
-            <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
-                <Nav setter=set_prefers_dark />
-            </div>
+        <Router fallback=|cx| {
+            let mut outside_errors = Errors::default();
+            outside_errors.insert_with_default_key(AppError::NotFound);
+            view! { cx,
+                <ErrorTemplate outside_errors/>
+            }
+            .into_view(cx)
+        }>
+        <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
+            <Nav setter=set_prefers_dark />
+        </div>
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
                 <Routes>
-                    <Route path="" view=|cx| view! { cx, <Homepage /> } ssr=SsrMode::Async />
-                    <Route path="ideas/" view=|cx| view! { cx, <Ideas /> } />
-                    //<Route path="*" element=move |_cx| view! { cx, <PageNotFound/> } />
+                    <Route path="" view=|cx| view! {cx, <Homepage/> }/>
+                    <Route path="ideas/" view=|cx| view! { cx, <Ideas /> }/>
+                    //<Route path="*" view=|cx| view! { cx ,<h1>"Page not found"</h1> }/>
                 </Routes>
             </main>
         </Router>

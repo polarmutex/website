@@ -1,51 +1,49 @@
-use cfg_if::cfg_if;
+#[cfg(feature = "ssr")]
+#[tokio::main]
+async fn main() {
+    use axum::{extract::Extension, routing::post, Router};
+    use brianryall_xyz::app::*;
+    use brianryall_xyz::fallback::file_and_error_handler;
+    use leptos::*;
+    use leptos_axum::{generate_route_list, LeptosRoutes};
+    use std::sync::Arc;
+    //let conf = get_configuration(Some("Cargo.toml")).await.unwrap();
+    //let addr = conf.leptos_options.site_addr;
 
-cfg_if! {
-    if #[cfg(feature = "ssr")] {
-        use leptos::*;
-        use leptos_actix::*;
-        use actix_files::{Files};
-        use actix_web::{HttpServer, middleware::Compress};
+    simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
 
-        fn app(cx: leptos::Scope) -> impl IntoView {
-            use brianryall_xyz::app::*;
+    // Setting get_configuration(None) means we'll be using cargo-leptos's env values
+    // For deployment these variables are:
+    // <https://github.com/leptos-rs/start-axum#executing-a-server-on-a-remote-machine-without-the-toolchain>
+    // Alternately a file can be specified such as Some("Cargo.toml")
+    // The file would need to be included with the executable when moved to deployment
+    let conf = get_configuration(None).await.unwrap();
+    let leptos_options = conf.leptos_options;
+    let addr = leptos_options.site_addr;
+    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
 
-            view! { cx, <App /> }
-        }
+    brianryall_xyz::routes::api::register_server_functions();
 
-        #[actix_web::main]
-        async fn main() -> std::io::Result<()> {
-            let conf = get_configuration(Some("Cargo.toml")).await.unwrap();
-            let addr = conf.leptos_options.site_addr;
+    // build our application with a route
+    let app = Router::new()
+        .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
+        .leptos_routes(leptos_options.clone(), routes, |cx| view! { cx, <App/> })
+        .fallback(file_and_error_handler)
+        .layer(Extension(Arc::new(leptos_options)));
+    // TODO compression
 
-            simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
-            log::info!("serving at http://{addr}");
+    // run our app with hyper
+    // `axum::Server` is a re-export of `hyper::Server`
+    log!("listening on http://{}", &addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
 
-            brianryall_xyz::routes::api::register_server_functions();
-
-            HttpServer::new(move || {
-                let leptos_options = &conf.leptos_options;
-                let site_root = &leptos_options.site_root;
-                let routes = generate_route_list(app);
-
-                actix_web::App::new()
-                    .route("/api/{tail:.*}", handle_server_fns())
-                    .leptos_routes(leptos_options.clone(), routes, app)
-                    // used by cargo-leptos. Should handle static files another way if not using cargo-leptos.
-                    // fallback (for static files)
-                    .service(Files::new("", format!("./{site_root}")))
-                    .wrap(Compress::default())
-            })
-            .bind(&addr)?
-            .run()
-            .await
-        }
-    }
-    else {
-        pub fn main() {
-            // no client-side main function
-            // unless we want this to work with e.g., Trunk for pure client-side testing
-            // see lib.rs for hydration function instead
-        }
-    }
+#[cfg(not(feature = "ssr"))]
+pub fn main() {
+    // no client-side main function
+    // unless we want this to work with e.g., Trunk for a purely client-side app
+    // see lib.rs for hydration function instead
 }
