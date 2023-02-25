@@ -120,7 +120,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </div>
-            // if you have multiple categories enabled
+            /*// if you have multiple categories enabled
             //{#if POST_CATEGORIES.length > 1}
                 <div class="mt-2 mb-8 flex items-center">
                     <div class="mr-2 text-gray-900 dark:text-gray-400">"Filter:"</div>
@@ -143,7 +143,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                         //{/each}
                     </div>
                 </div>
-            //{/if}
+            //{/if}*/
 
             // you can hardcode yourmost popular posts or pinned post here if you wish
             //{#if !$search && !$selectedCategories?.length}
