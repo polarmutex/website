@@ -48,7 +48,7 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
                 <Routes>
                     <Route path="" view=|cx| view! {cx, <Homepage/> }/>
-                    <Route path="ideas/" view=|cx| view! { cx, <Ideas /> }/>
+                    <Route path="/ideas" view=|cx| view! { cx, <Ideas /> }/>
                     //<Route path="*" view=|cx| view! { cx ,<h1>"Page not found"</h1> }/>
                 </Routes>
             </main>
