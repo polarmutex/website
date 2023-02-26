@@ -107,8 +107,8 @@
           installPhaseCommand = ''
             mkdir -p $out
             cp Cargo.toml $out
-            mkdir -p $out/content/posts
-            cp -r content/posts/* $out/content/posts/.
+            mkdir -p $out/content/ideas
+            cp -r content/ideas/* $out/content/ideas/.
           '';
         });
       #my-crate = craneLib.buildPackage (commonArgs
