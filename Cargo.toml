@@ -22,10 +22,10 @@ http = "0.2.9"
 # leptos_actix = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false, optional = true }
 # leptos_meta = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
 # leptos_router = { git = "https://github.com/polarmutex/leptos", branch = "html-class", default-features = false }
-leptos = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["serde"] }
-leptos_axum = { git = "https://github.com/leptos-rs/leptos", optional = true }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false }
+leptos = { version= "0.2", default-features = false, features = ["serde"] }
+leptos_axum = { version = "0.2", optional = true }
+leptos_meta = { version = "0.2", default-features = false }
+leptos_router = { version = "0.2", default-features = false }
 log = "0.4"
 serde = "1"
 simple_logger = "4"
