@@ -103,6 +103,6 @@ pub fn Umami(cx: Scope) -> impl IntoView {
 
     //if cfg!(not(debug_assertions)) {
     if cfg!(not(debug_assertions)) {
-        meta.tags.register(cx, id, builder_el.into_any());
+        meta.tags.register(cx, id.into(), builder_el.into_any());
     }
 }
