@@ -1,12 +1,16 @@
-use crate::components::feature_card::*;
-use crate::components::latest_posts::*;
 use leptos::*;
+use leptos_meta::*;
+
+use crate::components::LatestPosts;
 
 #[component]
-pub fn Homepage(cx: Scope) -> impl IntoView {
+pub fn Index(cx: Scope) -> impl IntoView {
     view! { cx,
-        // sets the document title
-        //<Title text="Welcome to Leptos"/>
+        <Meta property="og:title" content="benwis"/>
+        <Title text="benwis"/>
+        <Meta name="description" content="Ben Wishovich's personal website"/>
+        <Meta property="og:description" content="Ben Wishovich's personal website"/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
         <div class="flex flex-col items-start justify-center max-w-2xl px-4 pb-16 mx-auto border-gray-200 dark:border-gray-700 sm:px-8">
             <div class="flex flex-col-reverse items-start sm:flex-row">
                 <div class="flex flex-col pr-8">

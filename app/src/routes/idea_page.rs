@@ -1,5 +1,5 @@
 use crate::errors::AppError;
-use crate::routes::api;
+use crate::functions::posts::get_post;
 use leptos::*;
 use leptos_router::*;
 
@@ -21,7 +21,7 @@ pub fn IdeaPage(cx: Scope) -> impl IntoView {
     let post = create_resource(cx, id, |id| async move {
         match id {
             Err(e) => Err(e),
-            Ok(id) => api::get_post(id)
+            Ok(id) => get_post(id)
                 .await
                 .map(|data| data.ok_or(AppError::NotFound))
                 .map_err(|_| AppError::InternalServerError)

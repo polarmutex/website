@@ -1,39 +1,13 @@
-use cfg_if::cfg_if;
-use comrak::ComrakOptions;
-use glob::glob;
-use gray_matter;
 use leptos::*;
 use serde::{Deserialize, Serialize};
-use std::fs;
 
-cfg_if! {
-
-    if #[cfg(feature = "ssr")] {
-         pub fn register_server_functions() {
-               // Silence clippy with the _
-            _ = GetPosts::register();
-            _ = GetPost::register();
-            _ = ToggleDarkMode::register();
-         }
-
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-        pub struct Post {
-            id: u16,
-            pub title: String,
-            pub slug: String,
-            pub date: String,
-            pub content: String,
-        }
-    } else {
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-        pub struct Post {
-            id: u16,
-            pub title: String,
-            pub slug: String,
-            pub date: String,
-            pub content: String,
-        }
-    }
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Post {
+    id: u16,
+    pub title: String,
+    pub slug: String,
+    pub date: String,
+    pub content: String,
 }
 
 const _404_PAGE: &str = "---\ntitle = 404\n---\n404 Not found.";
@@ -51,6 +25,10 @@ pub struct FrontMatter {
 
 #[server(GetPosts, "/api")]
 pub async fn get_posts(_cx: Scope) -> Result<Vec<Post>, ServerFnError> {
+    use glob::glob;
+    use gray_matter;
+    use std::fs;
+
     let posts: Vec<Post> = glob("content/ideas/*.md")
         .unwrap()
         .filter_map(Result::ok)
@@ -81,6 +59,9 @@ pub async fn get_posts(_cx: Scope) -> Result<Vec<Post>, ServerFnError> {
 
 #[server(GetPost, "/api")]
 pub async fn get_post(slug: String) -> Result<Option<Post>, ServerFnError> {
+    use comrak::ComrakOptions;
+    use std::fs;
+
     let page = &fs::read_to_string(format!("content/ideas/{}.md", slug));
 
     if page.is_ok() {
@@ -108,26 +89,4 @@ pub async fn get_post(slug: String) -> Result<Option<Post>, ServerFnError> {
     } else {
         Ok(None)
     }
-}
-
-#[server(ToggleDarkMode, "/api")]
-pub async fn toggle_dark_mode(cx: Scope, prefers_dark: bool) -> Result<bool, ServerFnError> {
-    use axum::http::header::{HeaderMap, HeaderValue, SET_COOKIE};
-    use leptos_axum::{ResponseOptions, ResponseParts};
-
-    let response =
-        use_context::<ResponseOptions>(cx).expect("to have leptos_actix::ResponseOptions provided");
-    let mut response_parts = ResponseParts::default();
-    let mut headers = HeaderMap::new();
-    headers.insert(
-        SET_COOKIE,
-        HeaderValue::from_str(&format!("darkmode={prefers_dark}; Path=/"))
-            .expect("to create header value"),
-    );
-    response_parts.headers = headers;
-
-    std::thread::sleep(std::time::Duration::from_millis(250));
-
-    response.overwrite(response_parts);
-    Ok(prefers_dark)
 }

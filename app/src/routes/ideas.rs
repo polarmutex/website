@@ -1,5 +1,5 @@
-use crate::components::index_card::*;
-use crate::routes::api;
+use crate::components::IndexCard;
+use crate::functions::posts::get_posts;
 use leptos::*;
 
 #[component]
@@ -30,7 +30,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
         cx,
         || (),
         move |_| async move {
-            match api::get_posts(cx).await {
+            match get_posts(cx).await {
                 Ok(s) => s,
                 _ => vec![],
             }

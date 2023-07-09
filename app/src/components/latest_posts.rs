@@ -1,9 +1,9 @@
-use crate::routes::api;
+use crate::functions::posts::get_posts;
 use leptos::*;
 
 #[component]
 pub fn LatestPosts(cx: Scope) -> impl IntoView {
-    let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
+    let posts = create_resource(cx, move || (), move |_| get_posts(cx));
 
     view! {
        cx,
