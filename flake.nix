@@ -12,23 +12,23 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    cargo-leptos = {
-      url = "github:leptos-rs/cargo-leptos/v0.1.11";
+    cargo-leptos-src = {
+      url = "github:leptos-rs/cargo-leptos?tag=v0.2.16";
+      flake = false;
+    };
+    obsidian-export-src = {
+      url = "github:zoni/obsidian-export?tag=v23.12.0";
+      flake = false;
+    };
+    obsidian-notes-src = {
+      url = "github:polarmutex/website";
       flake = false;
     };
 
     nix-filter.url = "github:numtide/nix-filter";
-    obsidian-export = {
-      url = "github:zoni/obsidian-export/v22.11.0";
-      flake = false;
-    };
 
     advisory-db = {
       url = "github:rustsec/advisory-db";
-      flake = false;
-    };
-    obsidian-second-brain = {
-      url = "git+ssh://git@git.brianryall.xyz/polarmutex/obsidian-second-brain.git";
       flake = false;
     };
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
@@ -36,7 +36,10 @@
 
   outputs = {
     self,
+    cargo-leptos-src,
+    crane,
     flake-parts,
+    nix-filter,
     ...
   } @ inputs:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -59,64 +62,255 @@
             inputs.rust-overlay.overlays.default
           ];
         };
-        rustToolchain = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
+
+        src = nix-filter {
+          root = ./.;
+          include = [
+            (nix-filter.lib.matchExt "toml")
+            ./Cargo.lock
+            ./crates
+          ];
+        };
+
+        toolchain = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
           toolchain.default.override {
             extensions = ["rust-src" "rust-analyzer"];
             targets = ["wasm32-unknown-unknown"];
           });
 
-        craneLib = inputs.crane.lib.${system}.overrideToolchain rustToolchain;
+        leptos-options = builtins.elemAt (builtins.fromTOML (builtins.readFile ./Cargo.toml)).workspace.metadata.leptos 0;
 
-        cargo-leptos = craneLib.buildPackage rec {
-          pname = "cargo-leptos";
-          version = "v0.1.11";
-          buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
+        craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
 
-          src = inputs.cargo-leptos;
+        cargo-leptos = (import ./nix/cargo-leptos.nix) {
+          inherit pkgs craneLib;
+          cargo-leptos = cargo-leptos-src;
+        };
+        # cargo-leptos = craneLib.buildPackage rec {
+        #   pname = "cargo-leptos";
+        #   version = "v0.1.11";
+        #   buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
+        #
+        #   src = inputs.cargo-leptos-src;
+        #
+        #   nativeBuildInputs = [
+        #     pkgs.pkg-config
+        #     pkgs.openssl
+        #   ];
+        #
+        #   buildInputs = with pkgs;
+        #     [openssl pkg-config]
+        #     ++ lib.optionals stdenv.isDarwin [
+        #       Security
+        #     ];
+        #
+        #   doCheck = false; # integration tests depend on changing cargo config
+        #
+        #   meta = with lib; {
+        #     description = "A build tool for the Leptos web framework";
+        #     homepage = "https://github.com/leptos-rs/cargo-leptos";
+        #     changelog = "https://github.com/leptos-rs/cargo-leptos/blob/v${version}/CHANGELOG.md";
+        #     license = with licenses; [mit];
+        #     maintainers = with maintainers; [benwis];
+        #   };
+        # };
 
-          nativeBuildInputs = [
+        style-js-deps = (import ./nix/style-js-deps.nix) {
+          inherit pkgs nix-filter;
+
+          source-root = ./.;
+        };
+
+        common-args = {
+          inherit src;
+
+          pname = leptos-options.bin-package;
+          version = "0.1.0";
+
+          doCheck = false;
+
+          nativeBuildInputs =
+            [
+              # Add additional build inputs here
+              cargo-leptos
+              pkgs.cargo-generate
+              pkgs.binaryen
+              pkgs.clang
+              pkgs.mold
+
+              # for styling
+              pkgs.dart-sass
+              pkgs.tailwindcss
+              pkgs.yarn
+              pkgs.yarn2nix-moretea.fixup_yarn_lock
+            ]
+            ++ pkgs.lib.optionals (system == "x86_64-linux") [
+              # extra packages only for x86_64-linux
+              pkgs.nasm
+            ]
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              # Additional darwin specific inputs can be set here
+              pkgs.libiconv
+            ];
+
+          buildInputs = [
             pkgs.pkg-config
             pkgs.openssl
           ];
+        };
 
-          buildInputs = with pkgs;
-            [openssl pkg-config]
-            ++ lib.optionals stdenv.isDarwin [
-              Security
+        # Build *just* the cargo dependencies, so we can reuse
+        # all of that work (e.g. via cachix) when running in CI
+        site-server-deps = craneLib.buildDepsOnly (common-args
+          // {
+            # if work is duplicated by the `server-site` package, update these
+            # commands from the logs of `cargo leptos build --release -vvv`
+            buildPhaseCargoCommand = ''
+              # build the frontend dependencies
+              cargo build --package=${leptos-options.lib-package} --lib --target-dir=/build/source/target/front --target=wasm32-unknown-unknown --no-default-features --profile=${leptos-options.lib-profile-release}
+              # build the server dependencies
+              cargo build --package=${leptos-options.bin-package} --no-default-features --release
+            '';
+          });
+
+        # Build the actual crate itself, reusing the dependency
+        # artifacts from above.
+        site-server = craneLib.buildPackage (common-args
+          // {
+            # link the style packages node_modules into the build directory
+            preBuild = ''
+              ln -s ${style-js-deps}/node_modules \
+                ./crates/site-app/style/tailwind/node_modules
+            '';
+
+            buildPhaseCargoCommand = ''
+              cargo leptos build --release -vvv
+            '';
+
+            installPhaseCommand = ''
+              mkdir -p $out/bin
+              cp target/release/site-server $out/bin/
+              cp target/release/hash.txt $out/bin/
+              cp -r target/site $out/bin/
+            '';
+
+            doCheck = false;
+            cargoArtifacts = site-server-deps;
+          });
+
+        site-server-container = pkgs.dockerTools.buildLayeredImage {
+          name = leptos-options.bin-package;
+          tag = "latest";
+          contents = [site-server pkgs.cacert];
+          config = {
+            # runs the executable with tini: https://github.com/krallin/tini
+            # this does signal forwarding and zombie process reaping
+            Entrypoint = ["${pkgs.tini}/bin/tini" "site-server" "--"];
+            WorkingDir = "${site-server}/bin";
+            # we provide the env variables that we get from Cargo.toml during development
+            # these can be overridden when the container is run, but defaults are needed
+            Env = [
+              "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
+              "LEPTOS_SITE_ROOT=${leptos-options.name}"
+              "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
+              "LEPTOS_SITE_ADDR=0.0.0.0:3000"
+              "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
+              "LEPTOS_ENV=PROD"
+              "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
             ];
-
-          doCheck = false; # integration tests depend on changing cargo config
-
-          meta = with lib; {
-            description = "A build tool for the Leptos web framework";
-            homepage = "https://github.com/leptos-rs/cargo-leptos";
-            changelog = "https://github.com/leptos-rs/cargo-leptos/blob/v${version}/CHANGELOG.md";
-            license = with licenses; [mit];
-            maintainers = with maintainers; [benwis];
           };
         };
       in {
+        checks = {
+          # lint packages
+          app-hydrate-clippy = craneLib.cargoClippy (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+              cargoClippyExtraArgs = "-p site-app --features hydrate -- --deny warnings";
+            });
+          app-ssr-clippy = craneLib.cargoClippy (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+              cargoClippyExtraArgs = "-p site-app --features ssr -- --deny warnings";
+            });
+          site-server-clippy = craneLib.cargoClippy (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+              cargoClippyExtraArgs = "-p site-server -- --deny warnings";
+            });
+          site-frontend-clippy = craneLib.cargoClippy (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+              cargoClippyExtraArgs = "-p site-frontend -- --deny warnings";
+            });
+
+          # make sure the docs build
+          site-server-doc = craneLib.cargoDoc (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+            });
+
+          # check formatting
+          site-server-fmt = craneLib.cargoFmt {
+            pname = common-args.pname;
+            version = common-args.version;
+
+            inherit src;
+          };
+
+          # # audit licenses
+          # site-server-deny = craneLib.cargoDeny {
+          #   pname = common_args.pname;
+          #   version = common_args.version;
+          #   inherit src;
+          # };
+
+          # run tests
+          site-server-nextest = craneLib.cargoNextest (common-args
+            // {
+              cargoArtifacts = site-server-deps;
+              partitions = 1;
+              partitionType = "count";
+            });
+        };
+
         pre-commit = {
           settings = {
             hooks.alejandra.enable = true;
             hooks.rustfmt.enable = true;
-            hooks.cargo-check.enable = true;
+            # hooks.cargo-check.enable = true;
           };
         };
+
+        packages = {
+          default = site-server;
+          server = site-server;
+          container = site-server-container;
+        };
+
         devShells.default = pkgs.mkShell {
-          name = "website";
-          buildInputs = with pkgs; [
-            rustToolchain
-            cargo-leptos
-            nodePackages.tailwindcss
-            openssl
-            pkg-config
-            wasm-pack
-          ];
+          nativeBuildInputs =
+            (with pkgs; [
+              toolchain # cargo and such from crane
+              just # command recipes
+              dive # docker images
+              cargo-leptos # main leptos build tool
+              flyctl # fly.io
+              bacon # cargo check w/ hot reload
+              cargo-deny # license checking
+              #nodePackages.tailwindcss
+              # openssl
+              # pkg-config
+              # wasm-pack
+            ])
+            ++ common-args.buildInputs
+            ++ common-args.nativeBuildInputs
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.darwin.Security
+            ];
           shellHook = ''
             ${config.pre-commit.installationScript}
           '';
-          RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
         };
       };
     };
