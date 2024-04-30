@@ -1,11 +1,10 @@
+use crate::components::LatestPosts;
 use leptos::*;
 use leptos_meta::*;
 
-use crate::components::LatestPosts;
-
 #[component]
-pub fn Index(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn Index() -> impl IntoView {
+    view! {
         <Meta property="og:title" content="benwis"/>
         <Title text="benwis"/>
         <Meta name="description" content="Ben Wishovich's personal website"/>

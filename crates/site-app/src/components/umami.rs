@@ -1,5 +1,5 @@
 #[component(transparent)]
-pub fn Umami(cx: Scope) -> impl IntoView {
+pub fn Umami() -> impl IntoView {
     let meta = use_head(cx);
     let id = "polar-link-1".to_string();
 

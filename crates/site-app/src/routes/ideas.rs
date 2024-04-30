@@ -3,7 +3,7 @@ use crate::functions::posts::get_posts;
 use leptos::*;
 
 #[component]
-pub fn Ideas(cx: Scope) -> impl IntoView {
+pub fn Ideas() -> impl IntoView {
     //let posts_list = create_server_action::<api::GetPosts>(cx);
     //posts_list.dispatch(api::GetPosts {});
     //let value = posts_list.value();
@@ -27,17 +27,16 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
         },
     );*/
     let posts = create_resource(
-        cx,
         || (),
         move |_| async move {
-            match get_posts(cx).await {
+            match get_posts().await {
                 Ok(s) => s,
                 _ => vec![],
             }
         },
     );
 
-    let (search, set_search) = create_signal(cx, "".to_string());
+    let (search, set_search) = create_signal("".to_string());
 
     /*let filtered_posts = create_resource(
         cx,
@@ -54,8 +53,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
         },
     );*/
     let filtered_posts = create_local_resource(
-        cx,
-        move || (search(), posts.read(cx)),
+        move || (search(), posts.get()),
         move |(search, posts)| async move {
             match posts {
                 None => vec![],
@@ -85,7 +83,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
     //let posts = create_resource(cx, move || (), move |_| api::get_posts(cx));
 
     //<svelte:window on:keyup={focusSearch} /> ?
-    view! { cx,
+    view! {
         <section class="mx-auto mb-16 flex max-w-2xl flex-col items-start justify-center px-4 sm:px-8">
             <h1 class="mb-4 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl">
                 "Brian Ryall's Ideas"
@@ -149,33 +147,32 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
             //{#if !$search && !$selectedCategories?.length}
             {move || {
                 if search().is_empty() {
-                    view! { cx,
+                    view! {
                         //<MostPopular />
                         <h3 class="mt-8 mb-4 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
                             "All Posts"
                         </h3>
                     }.into_any()
                 } else {
-                        view!{cx, <div />}.into_any()
+                        view!{<div />}.into_any()
                 }
             }}
             //{/if}
 
             //{#if list?.length}
-            <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
+            <Suspense fallback=move || view! {<p>"Loading..."</p> }>
                 <ul class="">
                     //{#each list as item}
                     {move || {
-                                 match filtered_posts.read(cx) {
+                                 match filtered_posts.get() {
                                      Some(list) => {
                                         if list.is_empty() {
-                                            vec![view! { cx, <div class="prose dark:prose-invert">"No blogposts found!"</div> }.into_any()]
+                                            vec![view! { <div class="prose dark:prose-invert">"No blogposts found!"</div> }.into_any()]
                                         } else {
                                             list
                                                 .into_iter()
                                                 .map(move |post| {
                                                     view! {
-                                                        cx,
                                                         <li class="mb-8 text-lg">
                                                             <IndexCard
                                                               post={post}
@@ -195,7 +192,7 @@ pub fn Ideas(cx: Scope) -> impl IntoView {
                                                 .collect::<Vec<_>>()
                                         }
                                      },
-                                     None => vec![view! { cx, <div class="prose dark:prose-invert">"No blogposts found!"</div>}.into_any()],
+                                     None => vec![view! { <div class="prose dark:prose-invert">"No blogposts found!"</div>}.into_any()],
                              }
                              }}
 

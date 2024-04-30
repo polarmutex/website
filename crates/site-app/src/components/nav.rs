@@ -1,10 +1,8 @@
-use crate::components::DarkModeToggle;
 use leptos::*;
 
 #[component]
-pub fn Nav(cx: Scope) -> impl IntoView {
+pub fn Nav() -> impl IntoView {
     view! {
-        cx,
         <nav class="relative mx-auto flex w-full max-w-2xl items-center justify-between border-gray-200 bg-gray-50 bg-opacity-60 py-8 text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 sm:pb-16">
             //<a href="#skip" class="skip-nav">Skip to content</a>
             //<MobileMenu />
@@ -51,22 +49,20 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                         />
                     </svg>
                 </a>
-                <DarkModeToggle/>
             </div>
         </nav>
     }
 }
 
 #[component]
-pub fn NavLink(cx: Scope, href: &'static str, children: Children) -> impl IntoView {
+pub fn NavLink(href: &'static str, children: Children) -> impl IntoView {
     view! {
-            cx,
             <a
                 class="hidden rounded-lg p-1 text-gray-800 transition-all hover:bg-yellow-200 dark:text-gray-200 dark:hover:bg-yellow-800 sm:px-3 sm:py-2 md:inline-block"
                 //class:font-semibold={isActive}
                 href=href
             ><span class="capsize">
-            {children(cx)}
+            {children()}
             </span>
     </a>
         }

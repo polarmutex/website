@@ -2,25 +2,24 @@ use crate::functions::posts::get_posts;
 use leptos::*;
 
 #[component]
-pub fn LatestPosts(cx: Scope) -> impl IntoView {
-    let posts = create_resource(cx, move || (), move |_| get_posts(cx));
+pub fn LatestPosts() -> impl IntoView {
+    let posts = create_resource(move || (), move |_| get_posts());
 
     view! {
-       cx,
         <section class="mb-8 w-full">
             <h3 id="latest" class="mb-6 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
                 "Latest Posts"
             </h3>
-            <Suspense fallback=move || view! {cx, <p>"Loading..."</p> }>
+            <Suspense fallback=move || view! {<p>"Loading..."</p> }>
                 <ul class="space-y-2 text-white">
                 { move || {
-                    posts.read(cx).map(move |posts| match posts {
+                    posts.get().map(move |posts| match posts {
                         Err(e) => {
-                            vec![view! { cx, <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_any()]
+                            vec![view! { <pre class="error">"Server Error: " {e.to_string()}</pre>}.into_any()]
                         }
                         Ok(posts) => {
                             posts.into_iter().map(move |post| {
-                                view! { cx,
+                                view! {
                                 <li>
                                     <a class="font-bold" data-sveltekit-preload-data href={format!("/ideas/{}",post.slug)}>{post.title}</a> //data-sveltekit-preload
                                     <span class="hidden text-xs text-black dark:text-gray-400 sm:inline">

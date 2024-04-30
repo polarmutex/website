@@ -298,16 +298,17 @@
               flyctl # fly.io
               bacon # cargo check w/ hot reload
               cargo-deny # license checking
-              #nodePackages.tailwindcss
-              # openssl
-              # pkg-config
-              # wasm-pack
+              nodePackages.tailwindcss
+              openssl
+              pkg-config
+              wasm-pack
             ])
             ++ common-args.buildInputs
             ++ common-args.nativeBuildInputs
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
               pkgs.darwin.Security
             ];
+          RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
           shellHook = ''
             ${config.pre-commit.installationScript}
           '';

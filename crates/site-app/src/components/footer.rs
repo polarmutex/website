@@ -1,8 +1,8 @@
 use leptos::*;
 
 #[component]
-pub fn Footer(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn Footer() -> impl IntoView {
+    view! {
         <footer class="mx-auto mb-8 flex w-full max-w-2xl flex-col items-start justify-center">
             <hr class="border-1 mb-8 w-full border-gray-200 dark:border-gray-800" />
             <div class="grid w-full max-w-2xl grid-cols-1 gap-4 px-4 pb-16 sm:grid-cols-2 sm:px-8">

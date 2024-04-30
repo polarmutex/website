@@ -2,8 +2,8 @@ use crate::functions::posts::Post;
 use leptos::*;
 
 #[component]
-pub fn IndexCard(cx: Scope, post: Post) -> impl IntoView {
-    view! {cx,
+pub fn IndexCard(post: Post) -> impl IntoView {
+    view! {
         <a class="w-full text-gray-900 hover:text-yellow-600 dark:text-gray-100 dark:hover:text-yellow-100 hover:no-underline" href=format!("/ideas/{}",post.slug)>
             <div class="w-full">
                 <div class="flex flex-col justify-between md:flex-row">

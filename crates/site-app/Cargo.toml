@@ -11,6 +11,17 @@ leptos_meta.workspace = true
 leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
 
+# axum.workspace = true
+# axum-extra.workspace = true
+cfg-if.workspace = true
+comrak.workspace = true
+glob.workspace = true
+gray_matter.workspace = true
+http.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+# web-sys.workspace = true
+
 [features]
 default = []
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
