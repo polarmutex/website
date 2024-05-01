@@ -200,7 +200,7 @@
 
         site-server-container = pkgs.dockerTools.buildLayeredImage {
           name = leptos-options.bin-package;
-          tag = "latest";
+          tag = "0.1.0";
           contents = [site-server pkgs.cacert];
           config = {
             # runs the executable with tini: https://github.com/krallin/tini
