@@ -10,9 +10,9 @@ pub fn Nav() -> impl IntoView {
                 <li>
                     <NavLink href="/">"Home"</NavLink>
                 </li>
-                <li>
-                    <NavLink href="/ideas">"Ideas"</NavLink>
-                </li>
+                // <li>
+                //     <NavLink href="/ideas">"Ideas"</NavLink>
+                // </li>
                 /*<li>
                     <NavLink href="/about">"About"</NavLink>
                 </li>*/
