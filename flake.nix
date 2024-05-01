@@ -198,28 +198,35 @@
             cargoArtifacts = site-server-deps;
           });
 
-        site-server-container = pkgs.dockerTools.buildLayeredImage {
-          name = leptos-options.bin-package;
-          tag = "0.1.0";
-          contents = [site-server pkgs.cacert];
-          config = {
-            # runs the executable with tini: https://github.com/krallin/tini
-            # this does signal forwarding and zombie process reaping
-            Entrypoint = ["${pkgs.tini}/bin/tini" "site-server" "--"];
-            WorkingDir = "${site-server}/bin";
-            # we provide the env variables that we get from Cargo.toml during development
-            # these can be overridden when the container is run, but defaults are needed
-            Env = [
-              "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
-              "LEPTOS_SITE_ROOT=${leptos-options.name}"
-              "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
-              "LEPTOS_SITE_ADDR=0.0.0.0:3000"
-              "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
-              "LEPTOS_ENV=PROD"
-              "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
-            ];
+        site-server-container = let
+          image = {
+            name = leptos-options.bin-package;
+            registry = "ghcr.io";
+            owner = "polarmutex";
           };
-        };
+        in
+          pkgs.dockerTools.buildLayeredImage {
+            name = "${image.registry}/${image.owner}/${image.name}";
+            tag = "0.1.0";
+            contents = [site-server pkgs.cacert];
+            config = {
+              # runs the executable with tini: https://github.com/krallin/tini
+              # this does signal forwarding and zombie process reaping
+              Entrypoint = ["${pkgs.tini}/bin/tini" "site-server" "--"];
+              WorkingDir = "${site-server}/bin";
+              # we provide the env variables that we get from Cargo.toml during development
+              # these can be overridden when the container is run, but defaults are needed
+              Env = [
+                "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
+                "LEPTOS_SITE_ROOT=${leptos-options.name}"
+                "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
+                "LEPTOS_SITE_ADDR=0.0.0.0:3000"
+                "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
+                "LEPTOS_ENV=PROD"
+                "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
+              ];
+            };
+          };
       in {
         checks = {
           # lint packages
