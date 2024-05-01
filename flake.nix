@@ -298,7 +298,8 @@
               flyctl # fly.io
               bacon # cargo check w/ hot reload
               cargo-deny # license checking
-              nodePackages.tailwindcss
+              # nodePackages.tailwindcss
+              tailwindcss
               openssl
               pkg-config
               wasm-pack

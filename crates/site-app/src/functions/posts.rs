@@ -23,7 +23,6 @@ pub struct FrontMatter {
     //pub slug: String,
 }
 
-#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetPosts, "/api")]
 pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     use glob::glob;
@@ -58,7 +57,6 @@ pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
-#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetPost, "/api")]
 pub async fn get_post(slug: String) -> Result<Option<Post>, ServerFnError> {
     use comrak::ComrakOptions;
