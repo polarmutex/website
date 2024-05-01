@@ -203,10 +203,11 @@
             name = leptos-options.bin-package;
             registry = "ghcr.io";
             owner = "polarmutex";
+            repo = "website";
           };
         in
           pkgs.dockerTools.buildLayeredImage {
-            name = "${image.registry}/${image.owner}/${image.name}";
+            name = "${image.registry}/${image.owner}/${image.repo}/${image.name}";
             tag = "0.1.0";
             contents = [site-server pkgs.cacert];
             config = {
