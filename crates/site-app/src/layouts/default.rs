@@ -4,6 +4,7 @@ use leptos_meta::*;
 //use crate::components::{Footer, FooterProps, Nav, NavProps};
 use crate::components::Footer;
 use crate::components::Nav;
+use crate::components::Umami;
 
 #[component]
 pub fn Default(children: Children) -> impl IntoView {
@@ -11,6 +12,8 @@ pub fn Default(children: Children) -> impl IntoView {
         <Html class="dark"/>
         <Body class="vsc-initialized bg-white text-white dark:bg-gray-900 dark:text-black"/>
         <Stylesheet id="leptos" href="/pkg/brianryall-xyz.css" />
+        <Umami />
+
         <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">
             <Nav/>
         </div>

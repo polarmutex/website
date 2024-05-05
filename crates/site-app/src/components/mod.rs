@@ -8,3 +8,5 @@ pub mod latest_posts;
 pub use latest_posts::*;
 pub mod nav;
 pub use nav::*;
+pub mod umami;
+pub use umami::*;
