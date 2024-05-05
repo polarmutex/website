@@ -208,18 +208,25 @@
         in
           pkgs.dockerTools.buildLayeredImage {
             name = "${image.registry}/${image.owner}/${image.repo}/${image.name}";
-            tag = "0.1.0";
-            contents = [site-server pkgs.cacert];
+            tag = "0.1.1";
+            created = "now";
+            contents = [
+              site-server
+              pkgs.cacert
+              # pkgs.bashInteractive #debug
+              # pkgs.coreutils #debug
+            ];
             config = {
               # runs the executable with tini: https://github.com/krallin/tini
               # this does signal forwarding and zombie process reaping
               Entrypoint = ["${pkgs.tini}/bin/tini" "site-server" "--"];
+              # Entrypoint = ["${pkgs.bash}/bin/bash"]; #debug
               WorkingDir = "${site-server}/bin";
               # we provide the env variables that we get from Cargo.toml during development
               # these can be overridden when the container is run, but defaults are needed
               Env = [
                 "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
-                "LEPTOS_SITE_ROOT=${leptos-options.name}"
+                "LEPTOS_SITE_ROOT=site"
                 "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
                 "LEPTOS_SITE_ADDR=0.0.0.0:3000"
                 "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
