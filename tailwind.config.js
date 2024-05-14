@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: [ "./crates/**/*.rs" ],
+    content: [ "./src/**/*.rs" ],
     darkMode: 'class',
     theme: {
         extend: {

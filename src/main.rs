@@ -1,19 +1,18 @@
-pub mod fileserv;
+use cfg_if::cfg_if;
+
+cfg_if! {
+if #[cfg(feature = "ssr")] {
 
 use axum::Router;
-use color_eyre::eyre::Result;
+use brianryall_xyz::app::App;
 use leptos::*;
 use leptos_axum::{generate_route_list, LeptosRoutes};
-use site_app::App;
-use tower::ServiceBuilder;
-use tower_http::compression::CompressionLayer;
+//use tower_http::compression::CompressionLayer;
+use brianryall_xyz::fileserv::file_and_error_handler;
 
-use self::fileserv::file_and_error_handler;
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    color_eyre::install().expect("Failed to install color_eyre");
-
+async fn main()  {
     let filter = tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or(
         tracing_subscriber::EnvFilter::new("info,site_server=debug,site_app=debug"),
     );
@@ -46,15 +45,14 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .leptos_routes(&leptos_options, routes, App)
         .fallback(file_and_error_handler)
-        .layer(ServiceBuilder::new().layer(CompressionLayer::new()))
+        //.layer(CompressionLayer::new())
         .with_state(leptos_options);
 
-    // run our app with hyper
-    // `axum::Server` is a re-export of `hyper::Server`
-    log::info!("listening on http://{}", &addr);
-    axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    logging::log!("listening on http://{}", &addr);
+    axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
 
-    Ok(())
 }
+}}
