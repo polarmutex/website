@@ -8,31 +8,36 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 leptos = { version = "0.6", features = ["serde", "tracing", "nightly", "experimental-islands", "nonce"] }
-leptos_axum = { version = "0.6", features = ["experimental-islands"],  optional = true }
+leptos_axum = { version = "0.6", features = ["experimental-islands", "nonce"],  optional = true }
 leptos_meta = { version = "0.6", features = ["nightly"] }
 leptos_router = { version = "0.6", features = ["nightly"] }
 
-axum = { version = "0.7", optional = true }
-# axum-extra = { version = "0.9", features = ["cookie"] }
+axum = { version = "0.7", optional = true, features = ["macros"] }
+# # axum-extra = { version = "0.9" }
 cfg-if = "1"
-# chrono = {version="0.4", features=["serde"]}
-# color-eyre = "0.6"
-# comrak = "0.16"
+chrono = {version="0.4", features=["serde"]}
+# # color-eyre = "0.6"
+# # comrak = "0.16"
 console_error_panic_hook = "0.1"
-console_log = "1"
-# glob = "0"
-# gray_matter = "0"
+# console_log = "1"
+femark = { git="https://github.com/benwis/femark", branch="pure_rust", optional = true }
+# # glob = "0"
+# # gray_matter = "0"
 graphql_client = { version = "0.14", optional = true }
 http = "1"
+indexmap = { version = "2", features = ["serde"] }
 log = "0.4"
 octocrab = { version = "0.38", optional = true }
+parking_lot = "0.12.1"
+reqwest = {version="0.11.18", default-features=false, features = ["rustls-tls"], optional = true }
 serde = { version = "1", features = ["derive"] }
 simple_logger = "4.2.0"
 thiserror = "1"
-tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+# tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+tokio = { version = "1.29.1", no-default-features=true }
+toml = "0.8"
 tower = { version = "0.4", optional = true }
-tower-http = { version = "0.5", features = ["fs"], optional = true }
-# tower-http = { version = "0.4", features = ["compression-gzip", "fs", "trace"], optional = true }
+tower-http = { version = "0.5", features = ["compression-gzip", "fs", "trace"], optional = true }
 tracing = "0.1"
 # tracing-opentelemetry = { version = "0.19.0", optional = true }
 # #tracing-futures = { version = "0.2.5", optional = true }
@@ -41,11 +46,11 @@ tracing-bunyan-formatter = { version = "0.3", optional = true }
 tracing-log = { version = "0.1", optional = true }
 tracing-logfmt = { version = "0.3", optional = true }
 wasm-bindgen = "=0.2.92"
-# web-sys = { version = "0.3.64", features = ["HtmlDocument"] }
-
-# chrono = "0.4.23"
-# estimated_read_time = "1.0.0"
-# sitemap = "0.4"
+# # web-sys = { version = "0.3.64", features = ["HtmlDocument"] }
+#
+# # chrono = "0.4.23"
+# # estimated_read_time = "1.0.0"
+# # sitemap = "0.4"
 
 [features]
 default = ["csr"]
@@ -65,7 +70,8 @@ ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
-    "dep:leptos_axum"
+    "dep:leptos_axum",
+    "dep:femark"
     ]
 
 [package.metadata.cargo-all-features]

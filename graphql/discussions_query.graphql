@@ -1,0 +1,17 @@
+query DiscussionsQuery($owner: String!, $name: String!) {
+    repository(owner: $owner, name: $name) {
+        discussions(categoryId: "DIC_kwDOI_mMBc4CfEwu") {
+            # type: DiscussionConnection
+            totalCount # Int!
+            nodes {
+                id
+                number
+                title
+                createdAt
+                updatedAt
+                lastEditedAt
+                bodyHTML
+            }
+        }
+    }
+}
