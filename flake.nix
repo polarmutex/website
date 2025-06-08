@@ -208,7 +208,7 @@
         in
           pkgs.dockerTools.buildLayeredImage {
             name = "${image.registry}/${image.owner}/${image.repo}/${image.name}";
-            tag = "0.1.2";
+            tag = "0.1.3";
             created = "now";
             contents = [
               site-server
