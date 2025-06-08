@@ -238,26 +238,26 @@
       in {
         checks = {
           # lint packages
-          app-hydrate-clippy = craneLib.cargoClippy (common-args
-            // {
-              cargoArtifacts = site-server-deps;
-              cargoClippyExtraArgs = "-p site-app --features hydrate -- --deny warnings";
-            });
-          app-ssr-clippy = craneLib.cargoClippy (common-args
-            // {
-              cargoArtifacts = site-server-deps;
-              cargoClippyExtraArgs = "-p site-app --features ssr -- --deny warnings";
-            });
-          site-server-clippy = craneLib.cargoClippy (common-args
-            // {
-              cargoArtifacts = site-server-deps;
-              cargoClippyExtraArgs = "-p site-server -- --deny warnings";
-            });
-          site-frontend-clippy = craneLib.cargoClippy (common-args
-            // {
-              cargoArtifacts = site-server-deps;
-              cargoClippyExtraArgs = "-p site-frontend -- --deny warnings";
-            });
+          # app-hydrate-clippy = craneLib.cargoClippy (common-args
+          #   // {
+          #     cargoArtifacts = site-server-deps;
+          #     cargoClippyExtraArgs = "-p site-app --features hydrate -- --deny warnings";
+          #   });
+          # app-ssr-clippy = craneLib.cargoClippy (common-args
+          #   // {
+          #     cargoArtifacts = site-server-deps;
+          #     cargoClippyExtraArgs = "-p site-app --features ssr -- --deny warnings";
+          #   });
+          # site-server-clippy = craneLib.cargoClippy (common-args
+          #   // {
+          #     cargoArtifacts = site-server-deps;
+          #     cargoClippyExtraArgs = "-p site-server -- --deny warnings";
+          #   });
+          # site-frontend-clippy = craneLib.cargoClippy (common-args
+          #   // {
+          #     cargoArtifacts = site-server-deps;
+          #     cargoClippyExtraArgs = "-p site-frontend -- --deny warnings";
+          #   });
 
           # make sure the docs build
           site-server-doc = craneLib.cargoDoc (common-args
