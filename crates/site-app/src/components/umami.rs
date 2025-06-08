@@ -9,7 +9,7 @@ pub fn Umami() -> impl IntoView {
     let builder_el = leptos::leptos_dom::html::script()
         .attr("async", true)
         //.attr("defer", true)
-        .attr("data-website-id", "2cd9a1e2-b62e-45c0-bbad-553cb882c341")
+        .attr("data-website-id", "32d1fd9c-4c0c-4841-8c8e-1cf26d18e234")
         .attr("src", "https://umami.brianryall.xyz/script.js");
 
     //if cfg!(not(debug_assertions)) {
