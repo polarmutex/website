@@ -1,34 +1,29 @@
-# build output
-dist/
-# generated types
-.astro/
+test-results
+node_modules
 
-# dependencies
-node_modules/
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
+# OS
 .DS_Store
+Thumbs.db
 
-#nix
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+*storybook.log
+storybook-static
 .direnv
 .pre-commit-config.yaml
-result
-
-#fonts
-fonts
-
-#obsidian files
-src/content/obsidian
-target
-.sass-cache/be4a68575e98e3304e79de74f221f80b076c1c07
