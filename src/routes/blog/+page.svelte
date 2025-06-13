@@ -41,9 +41,9 @@
 	// https://github.com/sw-yx/swyxkit/pull/171
 	// this will be slow if you have thousands of items, but most people don't
 	let isTruncated = items?.length > 20;
-	
-	
-	
+
+
+
 	// we are lazy loading a fuzzy search function
 	// with a fallback to a simple filter function
 	let loaded = false;
@@ -86,11 +86,11 @@
 	<h1 class="mb-4 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl">
 		{SITE_TITLE} Blog
 	</h1>
-	<p class="mb-4 text-gray-600 dark:text-gray-400">
-		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum sunt reprehenderit alias rerum
-		dolor impedit. In total, I've written {items.length} articles on my blog. Use the search below to
-		filter by title.
-	</p>
+	<!-- <p class="mb-4 text-gray-600 dark:text-gray-400"> -->
+	<!-- 	Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum sunt reprehenderit alias rerum -->
+	<!-- 	dolor impedit. In total, I've written {items.length} articles on my blog. Use the search below to -->
+	<!-- 	filter by title. -->
+	<!-- </p> -->
 	<div class="relative mb-4 w-full">
 		<input
 			aria-label="Search articles"
@@ -143,7 +143,7 @@
 
 	<!-- you can hardcode yourmost popular posts or pinned post here if you wish -->
 	{#if !$search && !$selectedCategories?.length}
-		<MostPopular />
+		<!-- <MostPopular /> -->
 		<h3 class="mt-8 mb-4 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
 			All Posts
 		</h3>
