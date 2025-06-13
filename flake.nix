@@ -71,7 +71,7 @@
                   version
                   src
                   ;
-                hash = "sha256-YrQVEQBcdwx7LhbzYaLLlx0wg1RbseMJ850m0NbefCc=";
+                hash = "sha256-urSDa7ABu2UNIlrGfdGid+4q+GzllTrl98QPP0SFtH4=";
               };
 
               env.NODE_ENV = "production";
@@ -123,7 +123,7 @@
                   cc-by-40 # geocities
                 ];
                 platforms = lib.platforms.linux;
-                mainProgram = "umami-server";
+                # mainProgram = "umami-server";
                 maintainers = with maintainers; [diogotcorreia];
               };
             });
