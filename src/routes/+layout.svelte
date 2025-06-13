@@ -2,8 +2,19 @@
     import '../app.css';
 	import Nav from '../components/Nav.svelte';
 	import { MY_TWITTER_HANDLE, MY_YOUTUBE, GITHUB_URL, SITE_TITLE } from '$lib/siteConfig';
+    import { dev } from '$app/environment';
 
 	let { children } = $props();
+
+	function handleUmamiLoad() {
+		console.log('umami loaded');
+		window.umami?.identify({
+			language: settings.language,
+			systemColorScheme: settings.colorScheme.system,
+			userColorScheme: settings.colorScheme.user,
+			splash: settings.splash,
+		});
+	}
 </script>
 
 <svelte:head>
@@ -13,6 +24,14 @@
 		title={'RSS Feed for ' + SITE_TITLE}
 		href="/rss.xml"
 	/>
+    {#if !dev}
+		<script
+			defer
+			onload={handleUmamiLoad}
+            src="https://umami.brianryall.xyz/script.js"
+            data-website-id="32d1fd9c-4c0c-4841-8c8e-1cf26d18e234"
+		></script>
+	{/if}
 </svelte:head>
 
 <div class="flex flex-col justify-center bg-gray-50 px-4 dark:bg-gray-900 sm:px-8">

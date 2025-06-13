@@ -149,8 +149,11 @@
             program = pkgs.writeShellApplication {
               name = "preview-app";
               runtimeInputs = [pkgs.nodejs];
+              runtimeEnv = {
+                PORT = 5173;
+              };
               text = ''
-                PORT=5173 node ${self'.packages.app}
+                node ${self'.packages.app}
               '';
             };
           };
