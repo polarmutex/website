@@ -106,14 +106,14 @@
               '';
 
               meta = with lib; {
-                changelog = "https://github.com/umami-software/umami/releases/tag/v${finalAttrs.version}";
-                description = "Simple, easy to use, self-hosted web analytics solution";
-                homepage = "https://umami.is/";
+                changelog = "";
+                description = "";
+                homepage = "https://github.com/polarmutex/website";
                 license = with lib.licenses; [
                   mit
                 ];
                 platforms = lib.platforms.linux;
-                # mainProgram = "umami-server";
+                mainProgram = "${finalAttrs.pname}";
                 maintainers = with maintainers; [polarmutex];
               };
             });
