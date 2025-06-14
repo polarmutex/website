@@ -46,11 +46,18 @@
           default = self'.packages.app;
           app = let
             pnpm = pkgs.pnpm_10;
-            packageJSON = lib.importJSON ./package.json;
+            packageJson = builtins.fromJSON (builtins.readFile ./package.json);
           in
             pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
-              pname = packageJSON.name;
-              inherit (packageJSON) version;
+              pname = packageJson.name;
+              version = packageJson.version;
+
+              src = ./.;
+
+              pnpmDeps = pnpm.fetchDeps {
+                inherit (finalAttrs) pname version src pnpmInstallFlags;
+                hash = "sha256-jMmkppy2NaXElqEXuvwXrLLwXxH/qQd+goF1VRiVdWQ=";
+              };
 
               nativeBuildInputs = with pkgs; [
                 makeWrapper
@@ -58,29 +65,18 @@
                 pnpm.configHook
               ];
 
-              src = ./.;
-
               # install dev dependencies as well, for rollup
               pnpmInstallFlags = ["--prod=false"];
-
-              pnpmDeps = pnpm.fetchDeps {
-                inherit
-                  (finalAttrs)
-                  pname
-                  pnpmInstallFlags
-                  version
-                  src
-                  ;
-                hash = "sha256-urSDa7ABu2UNIlrGfdGid+4q+GzllTrl98QPP0SFtH4=";
-              };
 
               env.NODE_ENV = "production";
 
               buildPhase = ''
                 runHook preBuild
-                pnpm build
+                pnpm run build
                 runHook postBuild
               '';
+
+              entrypointPath = "index.js";
 
               checkPhase = ''
                 runHook preCheck
@@ -90,27 +86,22 @@
 
               doCheck = false;
 
-              installPhase = ''
+              installPhase = let
+                binPath = lib.makeBinPath [
+                  pkgs.nodejs
+                ];
+              in ''
                 runHook preInstall
+
                 mkdir -p $out
-                cp -r ./build/* $out
-                # Run database migrations before starting umami.
-                # Add openssl to PATH since it is required for prisma to make SSL connections.
-                # Force working directory to $out because umami assumes many paths are relative to it (e.g., prisma and geolite).
-                # makeWrapper {nodejs}/bin/node $out/bin/umami-server  \
-                #   --set NODE_ENV production \
-                #   --set NEXT_TELEMETRY_DISABLED 1 \
-                #   --set PRISMA_QUERY_ENGINE_LIBRARY "{prisma-engines'}/lib/libquery_engine.node" \
-                #   --set PRISMA_SCHEMA_ENGINE_BINARY "{prisma-engines'}/bin/schema-engine" \
-                #   --prefix PATH : {
-                #   lib.makeBinPath [
-                #     openssl
-                #     nodejs
-                #   ]
-                # } \
-                #   --chdir $out \
-                #   --run "$out/node_modules/.bin/prisma migrate deploy" \
-                #   --add-flags "$out/server.js"
+                cp -r build $out/${finalAttrs.pname}
+                cp -r node_modules $out
+
+                makeWrapper ${lib.getExe pkgs.nodejs} $out/bin/${finalAttrs.pname} \
+                  --add-flags "$out/${finalAttrs.pname}/${finalAttrs.entrypointPath}" \
+                  --set NODE_PATH $out/node_modules \
+                  --prefix PATH : ${binPath}
+
                 runHook postInstall
               '';
 
@@ -120,11 +111,10 @@
                 homepage = "https://umami.is/";
                 license = with lib.licenses; [
                   mit
-                  cc-by-40 # geocities
                 ];
                 platforms = lib.platforms.linux;
                 # mainProgram = "umami-server";
-                maintainers = with maintainers; [diogotcorreia];
+                maintainers = with maintainers; [polarmutex];
               };
             });
         };
